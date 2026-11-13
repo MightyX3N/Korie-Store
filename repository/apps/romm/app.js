@@ -86,11 +86,42 @@
   // ---- Setup -------------------------------------------------------------------------------
 
   function fail(id, text) { const el = $(id); el.textContent = text || ''; el.hidden = !text; }
+
+  // RomM servers on this network (RomM's usual ports).
+  let looking = 0;
+  async function look() {
+    const mine = ++looking;
+    $('found').textContent = '';
+    $('found-state').textContent = 'Looking for RomM on this network…';
+    let found = [];
+    try { found = await pbs.scan({ ports: [8080, 80, 8443], path: '/api/heartbeat' }); } catch {}
+    if (mine !== looking) return;
+    let n = 0;
+    for (const f of found) {
+      let hb;
+      try { hb = JSON.parse(f.body); } catch { continue; }
+      if (!hb || !hb.SYSTEM) continue;
+      n++;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'server';
+      const t = document.createElement('b'); t.textContent = 'RomM ' + (hb.SYSTEM.VERSION || '');
+      const a = document.createElement('span'); a.textContent = f.url.replace(/^http:\/\//, '');
+      b.append(t, a);
+      b.onclick = () => { $('server').value = f.url; $('f-server').requestSubmit(); };
+      $('found').append(b);
+    }
+    $('found-state').textContent = n ? 'On this network:' : 'No RomM answered on this network. Type its address below.';
+    const a = document.activeElement;
+    if (n && !$('f-server').hidden && (!a || a === document.body || (a === $('server') && !$('server').value))) $('found').firstChild.focus();
+  }
+
   function setupForm(which) {
     $('v-library').hidden = true;
     $('v-setup').hidden = false;
     for (const f of ['f-server', 'f-login', 'f-code']) $(f).hidden = f !== which;
     requestAnimationFrame(() => pbs.nav.focusFirst($(which)));
+    if (which === 'f-server') look();
   }
 
   $('f-server').onsubmit = async (e) => {

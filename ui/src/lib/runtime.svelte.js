@@ -89,7 +89,12 @@ async function handle(f, m) {
     case 'hello':
       return { app: { id: app.id, name: app.name, version: app.version }, platform: device.platform, device: device.device || device.name || '', tv: !!device.tv, launcher: device.version, accent: settings.accent, look: settings.look };
     case 'http':
-      return call('http', { url: a.url, method: a.method || 'GET', headers: a.headers || {}, body: a.body ?? null, as: a.as === 'base64' ? 'base64' : 'text' });
+      return call('http', { url: a.url, method: a.method || 'GET', headers: a.headers || {}, body: a.body ?? null, as: a.as === 'base64' ? 'base64' : 'text', timeout: Math.min(Math.max(Number(a.timeout) || 0, 0), 60000) });
+    case 'scan': {
+      const ports = (Array.isArray(a.ports) ? a.ports : []).map(Number).filter((n) => n > 0 && n < 65536).slice(0, 4);
+      const path = typeof a.path === 'string' && a.path.startsWith('/') ? a.path : '/';
+      return call('net.scan', { ports, path, timeout: Math.min(Math.max(Number(a.timeout) || 800, 200), 2000) });
+    }
     case 'storage.get': {
       const v = localStorage.getItem(storageKey(app.id, String(a.key)));
       return v == null ? null : JSON.parse(v);

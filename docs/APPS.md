@@ -56,7 +56,8 @@ myapp/
 | `pbs.ready` | Resolves with `{ app, platform, device, tv, accent, look, mode, open }` once the launcher answered. |
 | `pbs.mode` | `fullscreen`, `window` or `service` (the hidden copy). |
 | `pbs.open` | What the launcher opened the app for: a home row item's or search result's `id`, `pbs:settings`, or null. |
-| `pbs.http(url, { method, headers, body, as })` | A web request made by the device, so CORS doesn't apply and cookies are kept (on Android, shared with `openWeb`). `as: 'base64'` for pictures. Resolves `{ status, headers, body }`; `status` 0 means no answer. |
+| `pbs.http(url, { method, headers, body, as, timeout })` | A web request made by the device, so CORS doesn't apply and cookies are kept (on Android, shared with `openWeb`). `as: 'base64'` for pictures; `timeout` in milliseconds (30 s if not given). Resolves `{ status, headers, body }`; `status` 0 means no answer. |
+| `pbs.scan({ port \| ports, path })` | Finds servers on the home network: asks every address next to the device on up to four ports for `path`, and resolves `[{ url, body }]` for those that answered 200. Takes a few seconds. |
 | `pbs.json(url, opts)` | `http` that reads JSON and throws on an error status (`err.status`, `err.body`). |
 | `pbs.storage.get(key)` / `.set(key, value)` / `.remove(key)` | The app's own saved values (any JSON). Other apps can't read them. |
 | `pbs.play({ url, title, subtitle, headers, start })` | Plays in the device's own player. Resolves `{ position, duration, ended }` (seconds) when it's closed. |
@@ -65,7 +66,7 @@ myapp/
 | `pbs.onBack(fn)` | Back (the remote's Back, Escape, Backspace). Return `true` when the app used it; otherwise the app closes. |
 | `pbs.provide('rows', fn)` / `pbs.provide('search', fn)` | In the service copy: answer the launcher. |
 | `pbs.refreshRows()` | Ask the launcher to fetch the rows again (after signing in, say). |
-| `pbs.nav` | Arrow keys move between buttons, links and fields by where they are on screen. Put `data-pbs-autofocus` on what should start selected and `data-pbs-scope` on an open panel to keep the keys inside it. `pbs.nav.disable()` turns it off. |
+| `pbs.nav` | Arrow keys move between buttons, links and fields by where they are on screen, and held keys move at a steady pace. Mark a row of cards or a menu with `data-pbs-line`: in it, the keys go one step at a time in order (nothing skipped), and coming back into it returns to where you were. Put `data-pbs-autofocus` on what should start selected and `data-pbs-scope` on an open panel to keep the keys inside it. `pbs.nav.disable()` turns it off. |
 
 ### Rows and search
 

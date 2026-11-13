@@ -101,6 +101,25 @@ class BridgeTest {
         }
     }
 
+    @Test fun findsServersOnTheNetwork() {
+        TestServer(mapOf("/api/status" to { _ -> Triple(200, emptyMap(), "{\"name\":\"Home\",\"version\":\"0.10.0\",\"needsSetup\":false}".toByteArray()) })).use { s ->
+            val port = s.base.substringAfterLast(':').toInt()
+            val found = Scan.run(listOf("127.0.0.1", "127.0.0.2"), listOf(port, 1), "/api/status", 500)
+            assertEquals(1, found.length())
+            assertEquals("http://127.0.0.1:$port", found.getJSONObject(0).getString("url"))
+            assertTrue(found.getJSONObject(0).getString("body").contains("Home"))
+        }
+        assertEquals(254, Scan.neighbours(listOf("192.168.1.19")).size)
+        assertTrue(Scan.neighbours(listOf("192.168.1.19")).contains("192.168.1.1"))
+    }
+
+    @Test fun httpTakesATimeout() {
+        val t0 = System.currentTimeMillis()
+        val r = bridge().call("http", JSONObject().put("url", "http://10.255.255.1:81/").put("timeout", 400)) as JSONObject
+        assertEquals(0, r.getInt("status"))
+        assertTrue("took ${System.currentTimeMillis() - t0} ms", System.currentTimeMillis() - t0 < 5000)
+    }
+
     @Test fun webAndPlayerAnswerWhenClosed() {
         val b = bridge()
         val (web, _) = answer(b, "web.open", JSONObject().put("url", "http://server:8080/"))

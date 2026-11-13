@@ -105,7 +105,8 @@ object Net {
         val body = if (args.isNull("body")) null else args.optString("body").toByteArray()
         val out = JSONObject()
         try {
-            val r = request(args.getString("url"), args.optString("method", "GET"), headers, body, jar)
+            val t = args.optInt("timeout", 0).let { if (it in 1..60000) it else 30_000 }
+            val r = request(args.getString("url"), args.optString("method", "GET"), headers, body, jar, t)
             out.put("status", r.status)
             out.put("url", r.url)
             out.put("headers", JSONObject(r.headers as Map<*, *>))

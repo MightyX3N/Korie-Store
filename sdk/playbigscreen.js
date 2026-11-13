@@ -83,7 +83,16 @@
     return scopes.length ? scopes[scopes.length - 1] : document;
   }
 
-  function move(dir) {
+  // Lines (data-pbs-line: a row of cards, a menu) go one step at a time in order, and Up or
+  // Down into one goes back to where you were in it. Everything else goes by position.
+  const lastInLine = new WeakMap();
+  document.addEventListener('focusin', (e) => {
+    const line = e.target.closest && e.target.closest('[data-pbs-line]');
+    if (line) lastInLine.set(line, e.target);
+  });
+  const sideBySide = (items) => items.length < 2 || Math.abs(items[1].getBoundingClientRect().top - items[0].getBoundingClientRect().top) < 8;
+
+  function move(dir, fast) {
     const scope = scopeOf();
     const all = [...scope.querySelectorAll(FOCUSABLE)].filter((el) => visible(el) && !el.closest('[data-pbs-skip]'));
     const cur = document.activeElement;
@@ -92,10 +101,26 @@
       if (first) first.focus();
       return !!first;
     }
+    const behavior = fast ? 'auto' : 'smooth';
+    const line = cur.closest('[data-pbs-line]');
+    if (line) {
+      const mine = all.filter((el) => line.contains(el));
+      const along = sideBySide(mine) ? (dir === 'left' || dir === 'right') : (dir === 'up' || dir === 'down');
+      if (along) {
+        const next = mine[mine.indexOf(cur) + (dir === 'right' || dir === 'down' ? 1 : -1)];
+        if (next) {
+          next.focus({ preventScroll: true });
+          next.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior });
+          return true;
+        }
+        if (dir === 'right' || dir === 'down') return false;
+      }
+    }
     const a = cur.getBoundingClientRect();
     const ax = a.left + a.width / 2, ay = a.top + a.height / 2;
     let best = null, bestScore = Infinity;
     for (const el of all) {
+      if (line && line.contains(el)) continue;
       if (el === cur) continue;
       const b = el.getBoundingClientRect();
       const bx = b.left + b.width / 2, by = b.top + b.height / 2;
@@ -114,12 +139,18 @@
       if (score < bestScore) { bestScore = score; best = el; }
     }
     if (best) {
+      const into = best.closest('[data-pbs-line]');
+      if (into && into !== line) {
+        const was = lastInLine.get(into);
+        if (was && all.includes(was)) best = was;
+      }
       best.focus({ preventScroll: true });
-      best.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      best.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior });
     }
     return !!best;
   }
 
+  let lastMove = 0;
   const DIRS = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' };
 
   document.addEventListener('keydown', async (e) => {
@@ -139,7 +170,11 @@
       if (dir === 'right' && t.selectionEnd < len) return;
     }
     if (t && t.tagName === 'SELECT' && (dir === 'up' || dir === 'down')) return;
-    if (move(dir)) e.preventDefault();
+    // Held keys: one step at a steady pace.
+    const now = performance.now();
+    if (e.repeat && now - lastMove < 130) { e.preventDefault(); return; }
+    lastMove = now;
+    if (move(dir, e.repeat)) e.preventDefault();
   });
 
   // ---- The API ---------------------------------------------------------------------------
@@ -173,7 +208,7 @@
     /** A web request made by the device, so other servers' CORS rules don't apply. */
     http(url, opts) {
       opts = opts || {};
-      return call('http', { url: String(new URL(url, location.href)), method: opts.method || 'GET', headers: opts.headers || {}, body: opts.body == null ? null : typeof opts.body === 'string' ? opts.body : JSON.stringify(opts.body), as: opts.as || 'text' });
+      return call('http', { url: String(new URL(url, location.href)), method: opts.method || 'GET', headers: opts.headers || {}, body: opts.body == null ? null : typeof opts.body === 'string' ? opts.body : JSON.stringify(opts.body), as: opts.as || 'text', timeout: opts.timeout || 0 });
     },
     /** Like http, but reads JSON and throws on an error status. */
     async json(url, opts) {
@@ -184,6 +219,13 @@
         throw err;
       }
       return r.body ? JSON.parse(r.body) : null;
+    },
+    /** Looks for servers on the home network: every address next to this device, on the
+     *  given port(s), asked for `path`. Resolves [{ url, body }] for those answering 200. */
+    scan(opts) {
+      opts = opts || {};
+      const ports = (opts.ports || [opts.port || 80]).map(Number).filter((p) => p > 0 && p < 65536).slice(0, 4);
+      return call('scan', { ports, path: opts.path || '/', timeout: opts.timeout || 800 });
     },
     storage: {
       get: (key) => call('storage.get', { key }),

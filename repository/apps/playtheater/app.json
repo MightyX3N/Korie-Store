@@ -1,9 +1,9 @@
 {
   "id": "playtheater",
   "name": "PlayTheater",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "subtitle": "Your films, series, music and audiobooks",
-  "description": "Opens your PlayTheater server full screen, in its TV layout. Sign in once and Continue watching, plus what's new in your libraries, show up on the home screen; Search finds films and series on the server too.",
+  "description": "Finds your PlayTheater server on the home network and opens it full screen, in its TV layout. Sign in once: Continue watching and what's new show up on the home screen, Search finds films and series on the server, and away from home it uses the server's address from outside by itself.",
   "author": "PlayBigScreen",
   "category": "Watch",
   "color": "#4a2340",

@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -121,7 +122,7 @@ function keepCookies(u, res) {
   jar.set(u.host, c);
 }
 
-async function httpCall({ url, method = 'GET', headers = {}, body = null, as = 'text' }) {
+async function httpCall({ url, method = 'GET', headers = {}, body = null, as = 'text', timeout = 0 }) {
   const u = new URL(url);
   if (!/^https?:$/.test(u.protocol)) throw new Error('only http and https');
   const h = { ...headers };
@@ -129,7 +130,7 @@ async function httpCall({ url, method = 'GET', headers = {}, body = null, as = '
   if (ck && !Object.keys(h).some((k) => k.toLowerCase() === 'cookie')) h.Cookie = ck;
   let res;
   try {
-    res = await fetch(u, { method, headers: h, body: body == null || method === 'GET' ? undefined : body, redirect: 'follow', signal: AbortSignal.timeout(30000) });
+    res = await fetch(u, { method, headers: h, body: body == null || method === 'GET' ? undefined : body, redirect: 'follow', signal: AbortSignal.timeout(timeout > 0 ? timeout : 30000) });
   } catch (e) {
     return { status: 0, headers: {}, body: '', error: String(e.cause?.code || e.message) };
   }
@@ -140,7 +141,38 @@ async function httpCall({ url, method = 'GET', headers = {}, body = null, as = '
   return { status: res.status, headers: hs, url: res.url, body: as === 'base64' ? buf.toString('base64') : buf.toString('utf8') };
 }
 
+// The addresses next to this computer (its /24 home networks), for finding servers.
+function neighbours() {
+  const out = new Set();
+  for (const list of Object.values(os.networkInterfaces())) {
+    for (const a of list || []) {
+      if (a.family !== 'IPv4' || a.internal) continue;
+      const base = a.address.split('.').slice(0, 3).join('.');
+      for (let i = 1; i < 255; i++) out.add(`${base}.${i}`);
+    }
+  }
+  return [...out];
+}
+
+async function scan({ ports = [], path = '/', timeout = 800 }) {
+  const jobs = [];
+  for (const h of neighbours()) for (const p of ports) jobs.push(`http://${h}:${p}`);
+  const found = [];
+  let i = 0;
+  await Promise.all(Array.from({ length: 64 }, async () => {
+    while (i < jobs.length) {
+      const url = jobs[i++];
+      try {
+        const r = await fetch(url + path, { signal: AbortSignal.timeout(timeout), redirect: 'manual' });
+        if (r.status === 200) found.push({ url, body: (await r.text()).slice(0, 65536) });
+      } catch {}
+    }
+  }));
+  return found.sort((a, b) => a.url.localeCompare(b.url, undefined, { numeric: true }));
+}
+
 const bridge = {
+  'net.scan': scan,
   async info(_, req) {
     return { platform: 'web', host: 'browser', version: VERSION, device: 'This computer', tv: false, home: { isDefault: false, canSet: false }, helper: { available: false } };
   },

@@ -69,6 +69,11 @@ class Bridge(
         "apps.install" -> apps.install(args.getString("id"), args.getString("base"), args.getJSONObject("files"))
         "apps.remove" -> { apps.remove(args.getString("id")); JSONObject().put("removed", true) }
         "http" -> Net.call(args, jar)
+        "net.scan" -> {
+            val ports = args.optJSONArray("ports")?.let { a -> (0 until a.length()).map { a.optInt(it) } }.orEmpty().filter { it in 1..65535 }.take(4)
+            val path = args.optString("path", "/").let { if (it.startsWith("/")) it else "/" }
+            Scan.run(Scan.neighbours(Scan.ownAddresses(context)), ports, path, args.optInt("timeout", 800).coerceIn(200, 2000))
+        }
         "apk.install" -> installApk(args)
         "status" -> status()
         "volume.get" -> volume()

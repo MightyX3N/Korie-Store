@@ -19,8 +19,9 @@
   <section class="panel pbs-glass" data-pbs-scope>
     <form id="f-server">
       <h2>Connect to your RomM</h2>
-      <p>The address you open RomM at, like 192.168.1.20:8080 or https://games.example.com.</p>
-      <label class="pbs-label" for="server">Server address</label>
+      <p id="found-state">Looking for RomM on this network…</p>
+      <div class="found" id="found" data-pbs-line></div>
+      <label class="pbs-label" for="server">Or type the address you open RomM at</label>
       <input class="pbs-input" id="server" autocomplete="off" spellcheck="false" inputmode="url" placeholder="192.168.1.20:8080" data-pbs-autofocus />
       <p class="err" id="server-err" hidden></p>
       <div class="row"><button class="pbs-btn primary">Connect</button></div>
@@ -54,12 +55,12 @@
 <main id="v-library" class="library" hidden>
   <header class="top">
     <div class="brand small"><span class="mark"><img src="icon.svg" alt="" /></span><span id="where">RomM</span></div>
-    <div class="actions">
+    <div class="actions" data-pbs-line>
       <button class="pbs-btn" data-act="search" id="search-btn">Search</button>
       <button class="pbs-btn" data-act="settings">Settings</button>
     </div>
   </header>
-  <nav class="platforms" id="platforms" aria-label="Platforms"></nav>
+  <nav class="platforms" id="platforms" aria-label="Platforms" data-pbs-line></nav>
   <section class="games" id="games-wrap">
     <div class="head"><h1 id="list-title">All games</h1><span id="list-count"></span></div>
     <div class="search" id="search-box" hidden>

@@ -24,7 +24,7 @@
   const netIcon = $derived(!quick.status ? 'wifi' : !quick.status.network?.connected ? 'offline' : quick.status.network.type === 'ethernet' ? 'ethernet' : 'wifi');
 </script>
 
-<header class="bar">
+<header class="bar" data-nav-top>
   <div class="brand glass">
     <img src="/logo.svg" alt="" />
     <span>PlayBigScreen</span>

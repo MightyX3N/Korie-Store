@@ -19,6 +19,13 @@
   .panel p { margin: 0; color: var(--pbs-dim); font-size: 1.1rem; }
   .row { display: flex; gap: 1rem; flex-wrap: wrap; }
   .err { color: #ffb4a8 !important; }
+  .found { display: flex; flex-direction: column; gap: 0.8rem; }
+  .found:empty { display: none; }
+  .server { display: flex; flex-direction: column; align-items: flex-start; padding: 1rem 1.4rem; border-radius: 1.2rem; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--pbs-line); }
+  .server b { font-weight: 420; font-size: 1.25rem; }
+  .server span { color: var(--pbs-dim); font-size: 1rem; }
+  .server:focus { background: var(--pbs-ink); color: #0d1220; }
+  .server:focus span { color: #3a4255; }
   .profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; }
   .profile { display: flex; flex-direction: column; align-items: center; gap: 0.7rem; padding: 1.2rem; border-radius: 1.4rem; background: rgba(255, 255, 255, 0.06); }
   .profile span:first-child { width: 4.4rem; height: 4.4rem; border-radius: 50%; display: grid; place-items: center; font-size: 1.8rem; background: var(--c, #6b2140); }
@@ -39,14 +46,15 @@
   <section class="panel pbs-glass" data-pbs-scope>
     <!-- Which server -->
     <form id="v-connect" hidden>
-      <h2>Connect to your server</h2>
-      <p>The address you open PlayTheater at, like 192.168.1.20:8080 or https://films.example.com.</p>
+      <h2>Choose your server</h2>
+      <p id="found-state">Looking for PlayTheater on this network…</p>
+      <div class="found" id="found" data-pbs-line></div>
       <div>
-        <label class="pbs-label" for="server">Server address</label>
-        <input class="pbs-input" id="server" autocomplete="off" spellcheck="false" inputmode="url" placeholder="192.168.1.20:8080" data-pbs-autofocus />
+        <label class="pbs-label" for="server">Or type its address</label>
+        <input class="pbs-input" id="server" autocomplete="off" spellcheck="false" inputmode="url" placeholder="192.168.1.20:8484 or name.playit.plus" />
       </div>
       <p class="err" id="connect-err" hidden></p>
-      <div class="row"><button class="pbs-btn primary" id="connect-go">Connect</button></div>
+      <div class="row"><button class="pbs-btn primary" id="connect-go">Connect</button><button type="button" class="pbs-btn" data-act="look">Look again</button></div>
     </form>
 
     <!-- Signing in -->
@@ -75,7 +83,8 @@
     <div id="v-settings" hidden>
       <h2>PlayTheater on this device</h2>
       <p id="settings-who"></p>
-      <div class="row">
+      <p id="settings-where"></p>
+      <div class="row" data-pbs-line>
         <button class="pbs-btn primary" data-act="open" data-pbs-autofocus>Open PlayTheater</button>
         <button class="pbs-btn" data-act="switch">Switch profile</button>
         <button class="pbs-btn" data-act="signout">Sign out</button>

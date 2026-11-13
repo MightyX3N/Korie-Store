@@ -18,6 +18,20 @@ const { check, done, open, focused, calls, emit, bridge, wait } = require('./lib
   await k('ArrowDown'); await wait(150);
   check('down comes back to where you were in the row', (await focused(page)) === tiles[1]);
 
+  // Holding a direction: one app at a time at a steady pace, stopping at the end.
+  const holdKey = async (key, n) => { await page.keyboard.down(key); for (let i = 0; i < n; i++) { await wait(35); await page.keyboard.down(key); } await page.keyboard.up(key); await wait(300); };
+  await holdKey('ArrowRight', 40);
+  check('holding Right ends on the last app of the row', (await focused(page)) === tiles[tiles.length - 1]);
+  await holdKey('ArrowDown', 10);
+  check('holding Down with nothing below stays put', (await focused(page)) === tiles[tiles.length - 1]);
+  await holdKey('ArrowLeft', 40);
+  check('holding Left ends on the first app', (await focused(page)) === tiles[0]);
+  const steps = [];
+  for (let i = 0; i < tiles.length - 1; i++) { await page.keyboard.press('ArrowRight'); steps.push(await focused(page)); }
+  check('quick presses go one app each, nothing skipped', steps.join() === tiles.slice(1).join(), steps.join());
+  for (let i = 0; i < tiles.length; i++) await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('ArrowRight'); await wait(150);
+
   // Opening an Android app.
   await k('Enter'); await wait(300);
   const launched = await calls('android.launch');

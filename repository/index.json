@@ -5,9 +5,9 @@
     {
       "id": "playtheater",
       "name": "PlayTheater",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "subtitle": "Your films, series, music and audiobooks",
-      "description": "Opens your PlayTheater server full screen, in its TV layout. Sign in once and Continue watching, plus what's new in your libraries, show up on the home screen; Search finds films and series on the server too.",
+      "description": "Finds your PlayTheater server on the home network and opens it full screen, in its TV layout. Sign in once: Continue watching and what's new show up on the home screen, Search finds films and series on the server, and away from home it uses the server's address from outside by itself.",
       "author": "PlayBigScreen",
       "category": "Watch",
       "color": "#4a2340",
@@ -15,17 +15,17 @@
       "icon": "icon.svg",
       "path": "apps/playtheater/",
       "files": {
-        "app.js": "07689b36ec33e95efc00511617016aac761fd518cff392f0f94c76104708261a",
-        "app.json": "df1371e4991e6e150221c6992e5e8f148c998a035722445924097b46caf16bc9",
+        "app.js": "a59a7fb1d04864b221c922285b7e0a756b20252996719fa0e1a2b2c51dfeb799",
+        "app.json": "958b071d1ef2381baee25a14c5cee655d59a63592f1841011fdc584c123271c4",
         "background.jpg": "a9f4ca4f9305e5f957ff46e5d58275ad37ce2c07ea82c465785a21529f49897d",
         "icon.svg": "69ff92708e170b87b0bb76c8fc739c69328da28d68c2c7f76f11f2d50f5a64d1",
-        "index.html": "c951ab4f56c4ce9b1b2052914e880b0f14809954fd86770cf4003280543b7338"
+        "index.html": "edb60646e00c8325ff7a620d12f03a1ed93464a77c5e6ca18acb3b0678fd90ff"
       }
     },
     {
       "id": "romm",
       "name": "RomM",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "subtitle": "Your game library, played in the browser",
       "description": "Browse the games on your RomM server by platform, with their covers, and play them with RomM's built-in emulator. Continue playing and recently added games show up on the home screen, and Search finds games too. Needs a RomM server.",
       "author": "PlayBigScreen",
@@ -35,12 +35,12 @@
       "icon": "icon.svg",
       "path": "apps/romm/",
       "files": {
-        "app.css": "bae9106e65e08b3e09dd051fd0587bd32cf0b4790b507fd2e4999907875e8211",
-        "app.js": "44e3d07a0b9e04d8b83b0ea8610f023934013101d452aea211311a0d71e85e94",
-        "app.json": "918a477159beda1febef3f9acdb7642fb677913b295f6abb30a5aa59afbbe52d",
+        "app.css": "ce4cd8c110d3392c16c8a1e71d2f4ede688989f69f81287aaf0a100a585aa4af",
+        "app.js": "edc7d42b49355e15aee33b4689a268835e72b5ae85cc6e676b8e83f72ede36e6",
+        "app.json": "a3d7a13046278edcbfe55ca1410f49516a697102433b9bdc7be7ca240f82d5dc",
         "background.jpg": "cb5c7a8cfaeffe4ac2c76701ddf7a08ec9f4e89dd90b465b4f05409354dd07c9",
         "icon.svg": "d97aacef5bc2458ee44f69dedbfea4a6452f6353462fbad8b31ce00a66135feb",
-        "index.html": "2c31dadfff565d181a14cb7714de80f47709c7770090162d218e26ad5a764006"
+        "index.html": "a793fc8d5b5ef4340474ad22f948b34c74bb5cbfeecb40a36445d48c224b2350"
       }
     }
   ],

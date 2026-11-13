@@ -1,7 +1,7 @@
 {
   "id": "romm",
   "name": "RomM",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "subtitle": "Your game library, played in the browser",
   "description": "Browse the games on your RomM server by platform, with their covers, and play them with RomM's built-in emulator. Continue playing and recently added games show up on the home screen, and Search finds games too. Needs a RomM server.",
   "author": "PlayBigScreen",

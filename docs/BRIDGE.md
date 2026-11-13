@@ -22,7 +22,8 @@ Events from the device: `window.__pbs.event(name, data)` on Android, `GET /event
 | `apps.list` | | the installed launcher apps' `app.json`, each with `url` (its origin) |
 | `apps.install` | `{ id, base, files: { path: sha256 } }` | the app's `app.json` |
 | `apps.remove` | `{ id }` | `{ removed }` |
-| `http` | `{ url, method, headers, body, as: 'text' \| 'base64' }` | `{ status, headers, url, body, error? }` |
+| `http` | `{ url, method, headers, body, as: 'text' \| 'base64', timeout? }` | `{ status, headers, url, body, error? }` |
+| `net.scan` | `{ ports, path, timeout }` | `[{ url, body }]`: the addresses next to the device (its /24) that answered 200 on those ports |
 | `apk.install` | `{ url, sha256, package, name }` | `{ status: 'pending-user' \| 'needs-permission' }` |
 | `status` | | `{ network: { type, connected }, bluetooth?: { on } }` |
 | `volume.get` / `volume.set` | `{ level?, muted? }` | `{ level, max, muted }` |

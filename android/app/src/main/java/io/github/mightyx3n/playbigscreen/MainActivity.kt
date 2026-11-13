@@ -71,6 +71,8 @@ class MainActivity : Activity(), BridgeHost {
         s.domStorageEnabled = true
         s.databaseEnabled = true
         s.mediaPlaybackRequiresUserGesture = false
+        // Sizes follow the screen; the TV's own font size setting would blow the layout up.
+        s.textZoom = 100
         // Apps on https origins show pictures and talk to home servers on plain http.
         s.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         s.allowFileAccess = false

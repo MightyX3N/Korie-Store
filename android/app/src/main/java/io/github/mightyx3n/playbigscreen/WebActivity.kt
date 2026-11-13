@@ -43,6 +43,8 @@ class WebActivity : Activity() {
         s.javaScriptEnabled = true
         s.domStorageEnabled = true
         s.mediaPlaybackRequiresUserGesture = false
+        // Sizes follow the screen; the TV's own font size setting would blow the layout up.
+        s.textZoom = 100
         s.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         s.loadWithOverviewMode = true
         s.useWideViewPort = true
