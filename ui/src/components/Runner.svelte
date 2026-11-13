@@ -79,8 +79,10 @@
 {#if runner.video}
   <div class="layer fullscreen video" data-scope data-pt="video-layer">
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video bind:this={video} src={runner.video.url} controls autoplay onended={() => stopVideo(true)} style:filter={blur ? `blur(${blur}px)` : null}></video>
-    {#if dark > 0}<div class="dimmer" style:opacity={dark} data-pt="video-dimmer"></div>{/if}
+    <video bind:this={video} src={runner.video.url} controls autoplay onended={() => stopVideo(true)}></video>
+    <!-- The browser's own video controls are part of the video, so the picture above them is
+         covered (darkened and blurred) rather than the video itself. -->
+    {#if dark > 0 || blur > 0}<div class="dimmer" style:background="rgba(0, 0, 0, {dark})" style:backdrop-filter={blur ? `blur(${blur}px)` : null} style:-webkit-backdrop-filter={blur ? `blur(${blur}px)` : null} data-pt="video-dimmer"></div>{/if}
     <div class="floating">
       {#if settings.dimDark || settings.dimBlur}
         <button class="btn" onclick={() => (runner.video.dimmed = !runner.video.dimmed)} data-pt="video-dim">{runner.video.dimmed ? 'Undim' : 'Dim'}</button>
@@ -124,5 +126,5 @@
   .floating { position: absolute; top: 1.4rem; right: 1.4rem; display: flex; gap: 0.8rem; }
   .floating :global(.btn), .web > .floating { background: rgba(0, 0, 0, 0.55); }
   /* Dimming (for cars): over the picture; the player's own controls stay usable below it. */
-  .dimmer { position: absolute; inset: 0 0 4.5rem 0; background: #000; pointer-events: none; }
+  .dimmer { position: absolute; inset: 0 0 4.5rem 0; pointer-events: none; }
 </style>

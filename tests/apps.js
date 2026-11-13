@@ -78,10 +78,11 @@ const { check, done, open, wait, focused, installFromStore, TEST_REPO } = requir
   await page.click('[data-pt=tab-home]'); await wait(300);
   await page.click('[data-pt=row-apps] [data-key="app:windowed"]'); await wait(1000);
   await page.frameLocator('[data-pt=app-layer] iframe').locator('#play').click(); await wait(500);
-  check('videos apps play are darkened', (await page.$eval('[data-pt=video-dimmer]', (e) => getComputedStyle(e).opacity)) === '0.75');
-  check('…and blurred', (await page.$eval('[data-pt=video-layer] video', (v) => getComputedStyle(v).filter)).startsWith('blur('));
+  const look = await page.$eval('[data-pt=video-dimmer]', (e) => ({ bg: getComputedStyle(e).backgroundColor, blur: getComputedStyle(e).backdropFilter }));
+  check('videos apps play are darkened', look.bg === 'rgba(0, 0, 0, 0.75)', look.bg);
+  check('…and blurred', look.blur.startsWith('blur('), look.blur);
   await page.click('[data-pt=video-dim]'); await wait(200);
-  check('the player’s Undim turns it off', !(await page.$('[data-pt=video-dimmer]')) && (await page.$eval('[data-pt=video-layer] video', (v) => getComputedStyle(v).filter)) === 'none');
+  check('the player’s Undim turns it off', !(await page.$('[data-pt=video-dimmer]')));
   await page.click('[data-pt=video-close]'); await wait(300);
   await page.click('[data-pt=app-close]'); await wait(300);
 
