@@ -1,0 +1,10 @@
+{
+  "id": "drtv",
+  "name": "DRTV",
+  "version": "1.1.0",
+  "for": "theater",
+  "kind": "source",
+  "appVersions": "",
+  "description": "Films, series, programs and live channels from DRTV, the Danish public broadcaster. DR only plays them in Denmark, so the server has to be there.",
+  "author": "Korie"
+}

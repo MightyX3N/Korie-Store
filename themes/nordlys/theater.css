@@ -1,0 +1,52 @@
+/* Nordlys: a clear winter night, the aurora low over the horizon. */
+
+@font-face { font-family: 'Bricolage Grotesque'; src: url('fonts/bricolage-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Figtree'; src: url('fonts/figtree-400.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Figtree'; src: url('fonts/figtree-600.woff2') format('woff2'); font-weight: 600 800; font-display: swap; }
+
+:root {
+  --pt-bg: #07141a;
+  --pt-bg-image:
+    radial-gradient(120% 60% at 15% -10%, rgba(64, 214, 168, 0.16), transparent 60%),
+    radial-gradient(90% 50% at 85% -15%, rgba(126, 104, 232, 0.14), transparent 65%);
+  --pt-surface: #0e2028;
+  --pt-surface-2: #163039;
+  --pt-surface-3: #1f3e49;
+  --pt-glass: rgba(10, 28, 36, 0.86);
+  --pt-glass-border: rgba(160, 230, 255, 0.08);
+  --pt-blur: 14px;
+
+  --pt-text: #eef6f7;
+  --pt-text-dim: #9fb7bd;
+  --pt-text-faint: #6c8890;
+
+  --pt-accent: #a8dcff;
+  --pt-accent-text: #07141a;
+  --pt-accent-hover: #c4e8ff;
+  --pt-progress: #5fe0b4;
+  --pt-focus: #a8dcff;
+  --pt-focus-glow: 0 0 0 1px #a8dcff55, 0 16px 34px -14px #000;
+  --pt-danger: #ff9d8f;
+  --pt-ok: #5fe0b4;
+
+  --pt-font: 'Figtree', system-ui, sans-serif;
+  --pt-font-display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
+  --pt-display-weight: 700;
+  --pt-display-spacing: -0.015em;
+  --pt-display-case: none;
+
+  --pt-radius-card: 14px;
+  --pt-radius-button: 12px;
+  --pt-radius-panel: 18px;
+  --pt-radius-input: 10px;
+  --pt-card-hover-scale: 1.03;
+  --pt-card-ring: 2px;
+  --pt-card-shadow: 0 16px 34px -14px #000;
+
+  --pt-hero-shade: linear-gradient(0deg, #07141a 3%, transparent 55%), linear-gradient(90deg, #07141a 0%, #07141ad0 32%, transparent 72%);
+  --pt-placeholder: linear-gradient(160deg, #163039, #0e2028);
+  --pt-detail-poster: block;
+}
+
+/* The aurora stays behind the page as it scrolls. */
+body { background-attachment: fixed; }

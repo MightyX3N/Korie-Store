@@ -1,0 +1,25 @@
+{
+  "id": "nordlys",
+  "name": "Nordlys",
+  "version": "2.0.0",
+  "author": "Korie",
+  "description": "A winter night with the northern lights: deep blue-green dark, a faint aurora behind the pages, ice-blue buttons and a wide, friendly display face.",
+  "preview": "preview.jpg",
+  "vars": {
+    "accent": "#a8dcff",
+    "ink": "#eef6f7",
+    "dim": "#9fb7bd",
+    "faint": "#6c8890",
+    "shade": "#07141a",
+    "panel": "rgba(10, 28, 36, 0.86)",
+    "glass": "rgba(10, 28, 36, 0.6)",
+    "line": "rgba(160, 230, 255, 0.08)"
+  },
+  "font": {
+    "family": "Figtree",
+    "file": "fonts/figtree-400.woff2"
+  },
+  "apps": {
+    "theater": "theater.css"
+  }
+}

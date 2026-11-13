@@ -1,12 +1,7 @@
-node_modules/
-ui/dist/
-host/.data/
-android/.gradle/
-android/build/
-android/app/build/
-android/local.properties
-android/keystore.properties
-android/*.p12
-android/app/src/main/assets/ui/
-android/app/src/main/assets/sdk/
+/data/
+/playtheater
 /dist/
+webapp/node_modules/
+# The web app is built into web/dist by `npm run build` (and by the Docker build).
+web/dist/*
+!web/dist/.gitkeep

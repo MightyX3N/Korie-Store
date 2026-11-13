@@ -1,0 +1,8 @@
+{
+  "id": "drtv",
+  "name": "DRTV",
+  "version": "1.1.0",
+  "author": "Korie",
+  "description": "Films, series, programs and live channels from DRTV, the Danish public broadcaster. DR only plays them in Denmark, so the server has to be there.",
+  "downloads": true
+}

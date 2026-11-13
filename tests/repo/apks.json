@@ -1,5 +1,0 @@
-[
-  { "package": "org.example.radio", "name": "Radio", "description": "Already on the device (a newer one is offered).", "icon": "apps/windowed/icon.svg", "version": "2.0", "versionCode": 20, "url": "apks/fake.apk", "sha256": "4d93a1ed3e5fc1af668bf053c561c6855980311c1f7c7d0568050f152d3a9d3e", "size": 4096 },
-  { "package": "org.example.newapp", "name": "New App", "description": "Not on the device yet.", "icon": "apps/windowed/icon.svg", "version": "1.0", "versionCode": 1, "url": "apks/fake.apk", "sha256": "4d93a1ed3e5fc1af668bf053c561c6855980311c1f7c7d0568050f152d3a9d3e", "size": 4096 },
-  { "package": "org.example.broken", "name": "Broken Download", "description": "Its checksum doesn't match.", "icon": "apps/windowed/icon.svg", "version": "1.0", "versionCode": 1, "url": "apks/fake.apk", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "size": 4096 }
-]

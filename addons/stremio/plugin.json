@@ -1,0 +1,16 @@
+{
+  "id": "stremio",
+  "name": "Stremio addons",
+  "version": "1.0.0",
+  "author": "Korie",
+  "description": "Browse and play from Stremio addons. Add each addon's manifest address; catalogs, details and streams come from them, and nothing is saved on the server.",
+  "fields": [
+    {
+      "key": "addons",
+      "label": "Addons",
+      "type": "list",
+      "help": "One addon per line: the address of its manifest.json. Streams play when an addon gives a web address for them; addons that only give torrents can't be played.",
+      "default": "https://v3-cinemeta.strem.io/manifest.json"
+    }
+  ]
+}

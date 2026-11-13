@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="home_helper_description">Opens PlayBigScreen when the TV\'s own home screen comes up, so the Home button brings you to PlayBigScreen even on TVs that don\'t let you choose another home app. It only looks at which app is on screen.</string>
-</resources>

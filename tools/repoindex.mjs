@@ -27,7 +27,7 @@ function filesOf(base, rel = '') {
 }
 
 const meta = fs.existsSync(path.join(dir, 'repository.json')) ? JSON.parse(fs.readFileSync(path.join(dir, 'repository.json'), 'utf8')) : {};
-const index = { name: meta.name || path.basename(dir), description: meta.description || '', apps: [], apks: [] };
+const index = { name: meta.name || path.basename(dir), description: meta.description || '', apps: [], addons: [], themes: [], apks: [] };
 
 const appsDir = path.join(dir, 'apps');
 for (const id of fs.existsSync(appsDir) ? fs.readdirSync(appsDir).sort() : []) {
@@ -41,7 +41,36 @@ for (const id of fs.existsSync(appsDir) ? fs.readdirSync(appsDir).sort() : []) {
   index.apps.push({
     id, name: m.name, version: m.version, subtitle: m.subtitle || '', description: m.description || '', author: m.author || '',
     category: m.category || '', color: m.color || '', mode: m.mode || 'fullscreen', icon: m.icon || '',
+    parts: Array.isArray(m.parts) ? m.parts : ['client'], permissions: Array.isArray(m.permissions) ? m.permissions : [],
     path: `apps/${id}/`, files,
+  });
+}
+
+// addons/<id>/addon.json (+ files) -> "addons": features for one app, installed with it.
+const addonsDir = path.join(dir, 'addons');
+for (const id of fs.existsSync(addonsDir) ? fs.readdirSync(addonsDir).sort() : []) {
+  const base = path.join(addonsDir, id);
+  if (!fs.statSync(base).isDirectory()) continue;
+  const m = JSON.parse(fs.readFileSync(path.join(base, 'addon.json'), 'utf8'));
+  if (m.id !== id) throw new Error(`addons/${id}/addon.json has id "${m.id}"`);
+  for (const k of ['name', 'version', 'for', 'kind']) if (!m[k]) throw new Error(`addons/${id}/addon.json needs "${k}"`);
+  index.addons.push({
+    id, name: m.name, version: m.version, for: m.for, kind: m.kind, appVersions: m.appVersions || '',
+    description: m.description || '', author: m.author || '', path: `addons/${id}/`, files: filesOf(base),
+  });
+}
+
+// themes/<id>/theme.json (+ files) -> "themes": the look of Korie and of apps that allow it.
+const themesDir = path.join(dir, 'themes');
+for (const id of fs.existsSync(themesDir) ? fs.readdirSync(themesDir).sort() : []) {
+  const base = path.join(themesDir, id);
+  if (!fs.statSync(base).isDirectory()) continue;
+  const m = JSON.parse(fs.readFileSync(path.join(base, 'theme.json'), 'utf8'));
+  if (m.id !== id) throw new Error(`themes/${id}/theme.json has id "${m.id}"`);
+  for (const k of ['name', 'version']) if (!m[k]) throw new Error(`themes/${id}/theme.json needs "${k}"`);
+  index.themes.push({
+    id, name: m.name, version: m.version, description: m.description || '', author: m.author || '',
+    preview: m.preview || '', vars: m.vars || {}, apps: Object.keys(m.apps || {}), path: `themes/${id}/`, files: filesOf(base),
   });
 }
 
