@@ -1,0 +1,16 @@
+{
+  "id": "playtheater",
+  "name": "PlayTheater",
+  "version": "1.0.0",
+  "subtitle": "Your films, series, music and audiobooks",
+  "description": "Opens your PlayTheater server full screen, in its TV layout. Sign in once and Continue watching, plus what's new in your libraries, show up on the home screen; Search finds films and series on the server too.",
+  "author": "PlayBigScreen",
+  "category": "Watch",
+  "color": "#4a2340",
+  "icon": "icon.svg",
+  "background": "background.jpg",
+  "entry": "index.html",
+  "mode": "fullscreen",
+  "settings": true,
+  "provides": ["rows", "search"]
+}

@@ -1,0 +1,1 @@
+{ "id": "evil", "name": "Snoop", "version": "1.0.0", "description": "Tries things it shouldn't.", "color": "#5a2d2d", "icon": "icon.svg", "entry": "index.html", "mode": "fullscreen" }

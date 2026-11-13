@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RomM</title>
+<link rel="stylesheet" href="/__pbs/pbs.css" />
+<link rel="stylesheet" href="app.css" />
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- Connecting and signing in -->
+<main id="v-setup" class="setup" hidden>
+  <section class="intro">
+    <div class="brand"><span class="mark"><img src="icon.svg" alt="" /></span><h1>RomM</h1></div>
+    <p class="lead">Play the games on your RomM server, with the remote or a controller.</p>
+  </section>
+  <section class="panel pbs-glass" data-pbs-scope>
+    <form id="f-server">
+      <h2>Connect to your RomM</h2>
+      <p>The address you open RomM at, like 192.168.1.20:8080 or https://games.example.com.</p>
+      <label class="pbs-label" for="server">Server address</label>
+      <input class="pbs-input" id="server" autocomplete="off" spellcheck="false" inputmode="url" placeholder="192.168.1.20:8080" data-pbs-autofocus />
+      <p class="err" id="server-err" hidden></p>
+      <div class="row"><button class="pbs-btn primary">Connect</button></div>
+    </form>
+    <form id="f-login" hidden>
+      <h2>Sign in to RomM</h2>
+      <p id="login-where"></p>
+      <label class="pbs-label" for="user">Username</label>
+      <input class="pbs-input" id="user" autocomplete="username" spellcheck="false" data-pbs-autofocus />
+      <label class="pbs-label" for="pass">Password</label>
+      <input class="pbs-input" id="pass" type="password" autocomplete="current-password" />
+      <p class="err" id="login-err" hidden></p>
+      <div class="row">
+        <button class="pbs-btn primary">Sign in</button>
+        <button type="button" class="pbs-btn" data-act="use-code">Use a pairing code</button>
+        <button type="button" class="pbs-btn" data-act="change">Another server</button>
+      </div>
+    </form>
+    <form id="f-code" hidden>
+      <h2>Pair with a code</h2>
+      <p>In RomM, open your profile, then Client API tokens. Make a token and choose Pair a device, and type the 8-digit code here. Games you start may ask you to sign in to RomM once.</p>
+      <label class="pbs-label" for="code">Pairing code</label>
+      <input class="pbs-input" id="code" inputmode="numeric" autocomplete="off" maxlength="9" placeholder="12345678" data-pbs-autofocus />
+      <p class="err" id="code-err" hidden></p>
+      <div class="row"><button class="pbs-btn primary">Pair</button><button type="button" class="pbs-btn" data-act="use-login">Sign in with a password instead</button></div>
+    </form>
+  </section>
+</main>
+
+<!-- The library -->
+<main id="v-library" class="library" hidden>
+  <header class="top">
+    <div class="brand small"><span class="mark"><img src="icon.svg" alt="" /></span><span id="where">RomM</span></div>
+    <div class="actions">
+      <button class="pbs-btn" data-act="search" id="search-btn">Search</button>
+      <button class="pbs-btn" data-act="settings">Settings</button>
+    </div>
+  </header>
+  <nav class="platforms" id="platforms" aria-label="Platforms"></nav>
+  <section class="games" id="games-wrap">
+    <div class="head"><h1 id="list-title">All games</h1><span id="list-count"></span></div>
+    <div class="search" id="search-box" hidden>
+      <input class="pbs-input" id="q" placeholder="Search games…" autocomplete="off" spellcheck="false" enterkeyhint="search" />
+    </div>
+    <p class="empty" id="empty" hidden></p>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<!-- One game -->
+<div class="veil" id="veil" hidden></div>
+<section class="game pbs-glass" id="game" data-pbs-scope hidden>
+  <div class="cover" id="g-cover"></div>
+  <div class="info">
+    <p class="plat" id="g-plat"></p>
+    <h2 id="g-name"></h2>
+    <p class="sum" id="g-sum"></p>
+    <div class="row">
+      <button class="pbs-btn primary" data-act="play" id="g-play" data-pbs-autofocus>Play</button>
+      <button class="pbs-btn" data-act="details">Open in RomM</button>
+      <button class="pbs-btn" data-act="close-game">Close</button>
+    </div>
+    <p class="note" id="g-note"></p>
+  </div>
+</section>
+
+<!-- Settings -->
+<section class="game settings pbs-glass" id="settings" data-pbs-scope hidden>
+  <div class="info">
+    <h2>RomM on this device</h2>
+    <p class="sum" id="s-who"></p>
+    <div class="row">
+      <button class="pbs-btn" data-act="signout" data-pbs-autofocus>Sign out</button>
+      <button class="pbs-btn" data-act="change">Another server</button>
+      <button class="pbs-btn" data-act="close-settings">Close</button>
+    </div>
+  </div>
+</section>
+
+<script src="/__pbs/sdk.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

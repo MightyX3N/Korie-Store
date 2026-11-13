@@ -1,0 +1,96 @@
+name: Build
+
+# Every push to main builds and tests. A release (vX.Y.Z with the APK and checksums) is made
+# when VERSION has a number with no tag yet AND release-notes/<number>.md exists, so a new
+# version is only released once its notes are written.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      release: ${{ steps.v.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - id: v
+        run: |
+          V="$(tr -d ' \n' < VERSION)"
+          if [ "${{ github.event_name }}" = "push" ] && [ -f "release-notes/$V.md" ] && ! git rev-parse -q --verify "refs/tags/v$V" >/dev/null; then
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "version=$V" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "version=$V-main-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          fi
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: cd ui && npm ci && npm run build
+      - name: The repositories' index.json files are up to date
+        run: node tools/repoindex.mjs repository --check && node tools/repoindex.mjs tests/repo --check
+      - name: Browser tests
+        run: |
+          npm i -g playwright@1
+          npx playwright install --with-deps chromium
+          export NODE_PATH="$(npm root -g)"
+          sh tests/run.sh
+      - uses: actions/upload-artifact@v4
+        with: { name: ui, path: ui/dist/ }
+
+  android:
+    needs: [version, web]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: ui, path: ui/dist/ }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - uses: gradle/actions/setup-gradle@v4
+      # The app is signed with the project's own key, kept in the repository's secrets
+      # (ANDROID_KEYSTORE as base64, ANDROID_KEYSTORE_PASSWORD). Updates only install
+      # over an app signed with the same key.
+      - name: Signing key
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE" ]; then
+            echo "::warning::No ANDROID_KEYSTORE secret, so the APK isn't signed and isn't added to releases."
+            exit 0
+          fi
+          echo "$KEYSTORE" | base64 -d > android/release.p12
+          printf 'storeFile=release.p12\nstorePassword=%s\nkeyAlias=playbigscreen\nkeyPassword=%s\n' "$PASSWORD" "$PASSWORD" > android/keystore.properties
+      - name: Test and build
+        run: cd android && ./gradlew --no-daemon :app:testDebugUnitTest :app:assembleRelease
+      - name: Collect
+        run: |
+          mkdir -p dist
+          if [ -f android/keystore.properties ]; then
+            cp android/app/build/outputs/apk/release/app-release.apk "dist/PlayBigScreen-$VERSION.apk"
+            (cd dist && sha256sum PlayBigScreen-*.apk > checksums.txt)
+          fi
+          rm -f android/release.p12 android/keystore.properties
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: dist/, if-no-files-found: ignore }
+      - name: Release
+        if: needs.version.outputs.release == 'true'
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          if [ ! -f "dist/PlayBigScreen-$VERSION.apk" ]; then echo "::error::No signed APK to release"; exit 1; fi
+          gh release create "v$VERSION" dist/* --target "$GITHUB_SHA" --title "PlayBigScreen $VERSION" --notes-file "release-notes/$VERSION.md"

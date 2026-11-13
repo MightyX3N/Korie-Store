@@ -1,0 +1,12 @@
+node_modules/
+ui/dist/
+host/.data/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/keystore.properties
+android/*.p12
+android/app/src/main/assets/ui/
+android/app/src/main/assets/sdk/
+/dist/

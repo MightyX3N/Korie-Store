@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PlayTheater</title>
+<link rel="stylesheet" href="/__pbs/pbs.css" />
+<style>
+  body { background: #120a1c url('background.jpg') center / cover no-repeat; overflow: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: linear-gradient(90deg, rgba(8, 4, 14, 0.82), rgba(8, 4, 14, 0.35)); }
+  main { position: relative; height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) 40rem; align-items: center; gap: 4rem; padding: 0 calc(var(--pbs-gutter) + 2rem); }
+  .brand { display: flex; align-items: center; gap: 1.6rem; }
+  .brand img { width: 6rem; height: 6rem; }
+  h1 { margin: 0; font-size: 5rem; font-weight: 380; letter-spacing: -0.02em; }
+  .lead { margin: 1.4rem 0 0; font-size: 1.5rem; color: var(--pbs-dim); max-width: 44rem; }
+  .panel { border-radius: 2.4rem; padding: 2.8rem; display: flex; flex-direction: column; gap: 1.4rem; }
+  .panel > form, .panel > div { display: flex; flex-direction: column; gap: 1.2rem; }
+  .panel h2 { margin: 0; font-size: 1.8rem; font-weight: 400; }
+  .panel p { margin: 0; color: var(--pbs-dim); font-size: 1.1rem; }
+  .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .err { color: #ffb4a8 !important; }
+  .profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; }
+  .profile { display: flex; flex-direction: column; align-items: center; gap: 0.7rem; padding: 1.2rem; border-radius: 1.4rem; background: rgba(255, 255, 255, 0.06); }
+  .profile span:first-child { width: 4.4rem; height: 4.4rem; border-radius: 50%; display: grid; place-items: center; font-size: 1.8rem; background: var(--c, #6b2140); }
+  .profile:focus { background: var(--pbs-ink); color: #0d1220; }
+  .spin { width: 3rem; height: 3rem; border-radius: 50%; border: 0.3rem solid rgba(255, 255, 255, 0.2); border-top-color: var(--pbs-accent); animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  [hidden] { display: none !important; }
+  @media (max-aspect-ratio: 1/1) { main { grid-template-columns: 1fr; align-content: center; } h1 { font-size: 3rem; } }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <div class="brand"><img src="icon.svg" alt="" /><h1>PlayTheater</h1></div>
+    <p class="lead" id="lead">Your films, series, music and audiobooks, from your own PlayTheater server.</p>
+  </section>
+
+  <section class="panel pbs-glass" data-pbs-scope>
+    <!-- Which server -->
+    <form id="v-connect" hidden>
+      <h2>Connect to your server</h2>
+      <p>The address you open PlayTheater at, like 192.168.1.20:8080 or https://films.example.com.</p>
+      <div>
+        <label class="pbs-label" for="server">Server address</label>
+        <input class="pbs-input" id="server" autocomplete="off" spellcheck="false" inputmode="url" placeholder="192.168.1.20:8080" data-pbs-autofocus />
+      </div>
+      <p class="err" id="connect-err" hidden></p>
+      <div class="row"><button class="pbs-btn primary" id="connect-go">Connect</button></div>
+    </form>
+
+    <!-- Signing in -->
+    <form id="v-signin" hidden>
+      <h2>Sign in</h2>
+      <p id="signin-where"></p>
+      <div><label class="pbs-label" for="name">Name</label><input class="pbs-input" id="name" autocomplete="username" spellcheck="false" data-pbs-autofocus /></div>
+      <div><label class="pbs-label" for="password">Password</label><input class="pbs-input" id="password" type="password" autocomplete="current-password" /></div>
+      <p class="err" id="signin-err" hidden></p>
+      <div class="row"><button class="pbs-btn primary" id="signin-go">Sign in</button><button type="button" class="pbs-btn" data-act="change">Another server</button></div>
+    </form>
+
+    <!-- Who's watching -->
+    <div id="v-profile" hidden>
+      <h2>Who’s watching?</h2>
+      <div class="profiles" id="profiles"></div>
+      <form id="pin-form" hidden>
+        <label class="pbs-label" for="pin">PIN for <b id="pin-who"></b></label>
+        <input class="pbs-input" id="pin" type="password" inputmode="numeric" autocomplete="off" />
+        <div class="row" style="margin-top: 1rem"><button class="pbs-btn primary">Open</button></div>
+      </form>
+      <p class="err" id="profile-err" hidden></p>
+    </div>
+
+    <!-- Signed in: what the app's settings show -->
+    <div id="v-settings" hidden>
+      <h2>PlayTheater on this device</h2>
+      <p id="settings-who"></p>
+      <div class="row">
+        <button class="pbs-btn primary" data-act="open" data-pbs-autofocus>Open PlayTheater</button>
+        <button class="pbs-btn" data-act="switch">Switch profile</button>
+        <button class="pbs-btn" data-act="signout">Sign out</button>
+        <button class="pbs-btn" data-act="change">Another server</button>
+      </div>
+    </div>
+
+    <!-- On the way into PlayTheater -->
+    <div id="v-opening" hidden>
+      <div class="spin"></div>
+      <h2 id="opening-text">Opening PlayTheater…</h2>
+      <div class="row"><button class="pbs-btn" data-act="open" data-pbs-autofocus>Open again</button><button class="pbs-btn" data-act="settings">Settings</button></div>
+    </div>
+  </section>
+</main>
+<script src="/__pbs/sdk.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
