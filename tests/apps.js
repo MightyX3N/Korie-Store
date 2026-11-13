@@ -64,8 +64,25 @@ const { check, done, open, wait, focused, installFromStore, TEST_REPO } = requir
   check('…and tells the app when it’s closed', (await g.locator('#out').textContent()).startsWith('web closed'));
   await g.locator('#play').click(); await wait(400);
   check('play opens the player', await page.isVisible('[data-pt=video-layer]'));
+  check('…not dimmed unless chosen in Settings', !(await page.$('[data-pt=video-dimmer]')) && !(await page.$('[data-pt=video-dim]')));
   await page.click('[data-pt=video-close]'); await wait(300);
   check('…and answers where it stopped', (await g.locator('#out').textContent()).startsWith('played {"position"'));
+  await page.click('[data-pt=app-close]'); await wait(300);
+
+  // Dimming videos (for cars), from Settings → Videos.
+  await page.click('[data-pt=status]'); await page.click('[data-pt=qs-settings]'); await page.click('[data-pt=set-videos]'); await wait(200);
+  await page.click('[data-pt=dim-dark] button:has-text("75 %")');
+  await page.click('[data-pt=dim-blur] button:has-text("Light blur")');
+  const st = JSON.parse(await page.evaluate(() => localStorage.getItem('pbs-settings')));
+  check('the dimming choice is saved', st.dimDark === 75 && st.dimBlur === 1);
+  await page.click('[data-pt=tab-home]'); await wait(300);
+  await page.click('[data-pt=row-apps] [data-key="app:windowed"]'); await wait(1000);
+  await page.frameLocator('[data-pt=app-layer] iframe').locator('#play').click(); await wait(500);
+  check('videos apps play are darkened', (await page.$eval('[data-pt=video-dimmer]', (e) => getComputedStyle(e).opacity)) === '0.75');
+  check('…and blurred', (await page.$eval('[data-pt=video-layer] video', (v) => getComputedStyle(v).filter)).startsWith('blur('));
+  await page.click('[data-pt=video-dim]'); await wait(200);
+  check('the player’s Undim turns it off', !(await page.$('[data-pt=video-dimmer]')) && (await page.$eval('[data-pt=video-layer] video', (v) => getComputedStyle(v).filter)) === 'none');
+  await page.click('[data-pt=video-close]'); await wait(300);
   await page.click('[data-pt=app-close]'); await wait(300);
 
   // What an app can't do.

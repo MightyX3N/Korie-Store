@@ -2,7 +2,7 @@
   import { tick } from 'svelte';
   import Icon from './Icon.svelte';
   import { runner, serviceList, registerFrame, unregisterFrame, closeApp, closeWeb, closeVideo } from '../lib/runtime.svelte.js';
-  import { apps } from '../lib/state.svelte.js';
+  import { apps, settings } from '../lib/state.svelte.js';
 
   // Frames can do what a web app needs but can't move the launcher page itself.
   const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads allow-pointer-lock';
@@ -31,6 +31,10 @@
     if (runner.video.start) video.currentTime = runner.video.start;
     video.focus();
   });
+
+  // Dimming (for cars), from Settings → Videos.
+  const dark = $derived(runner.video?.dimmed ? (settings.dimDark || 0) / 100 : 0);
+  const blur = $derived(runner.video?.dimmed ? [0, 10, 28][settings.dimBlur || 0] : 0);
 
   function stopVideo(ended = false) {
     closeVideo(video?.currentTime || 0, video?.duration || 0, ended);
@@ -75,8 +79,14 @@
 {#if runner.video}
   <div class="layer fullscreen video" data-scope data-pt="video-layer">
     <!-- svelte-ignore a11y_media_has_caption -->
-    <video bind:this={video} src={runner.video.url} controls autoplay onended={() => stopVideo(true)}></video>
-    <button class="btn floating" onclick={() => stopVideo(false)} data-pt="video-close"><Icon name="close" size="1.2rem" />Close</button>
+    <video bind:this={video} src={runner.video.url} controls autoplay onended={() => stopVideo(true)} style:filter={blur ? `blur(${blur}px)` : null}></video>
+    {#if dark > 0}<div class="dimmer" style:opacity={dark} data-pt="video-dimmer"></div>{/if}
+    <div class="floating">
+      {#if settings.dimDark || settings.dimBlur}
+        <button class="btn" onclick={() => (runner.video.dimmed = !runner.video.dimmed)} data-pt="video-dim">{runner.video.dimmed ? 'Undim' : 'Dim'}</button>
+      {/if}
+      <button class="btn" onclick={() => stopVideo(false)} data-pt="video-close"><Icon name="close" size="1.2rem" />Close</button>
+    </div>
   </div>
 {/if}
 
@@ -111,5 +121,8 @@
   .close:hover, .close:focus { background: rgba(255, 255, 255, 0.14); color: var(--ink); }
   .window iframe { flex: 1; width: 100%; }
   video { width: 100%; height: 100%; background: #000; }
-  .floating { position: absolute; top: 1.4rem; right: 1.4rem; background: rgba(0, 0, 0, 0.55); }
+  .floating { position: absolute; top: 1.4rem; right: 1.4rem; display: flex; gap: 0.8rem; }
+  .floating :global(.btn), .web > .floating { background: rgba(0, 0, 0, 0.55); }
+  /* Dimming (for cars): over the picture; the player's own controls stay usable below it. */
+  .dimmer { position: absolute; inset: 0 0 4.5rem 0; background: #000; pointer-events: none; }
 </style>

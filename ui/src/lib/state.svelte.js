@@ -37,6 +37,8 @@ const defaults = {
   rows: [], // [{ id, on }] in order; rows not listed yet are added at the end
   repos: [DEFAULT_REPO],
   hidden: [], // app keys hidden from the home row and apps
+  dimDark: 0, // videos: how much darker (0, 25, 50, 75, 90, 100 = black), for cars
+  dimBlur: 0, // videos: 0 none, 1 light, 2 strong
 };
 
 export const settings = $state({ ...defaults, ...load('pbs-settings', {}) });

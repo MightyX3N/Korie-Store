@@ -174,6 +174,8 @@ class MainActivity : Activity(), BridgeHost {
             .putExtra("subtitle", args.optString("subtitle"))
             .putExtra("start", (args.optDouble("start", 0.0) * 1000).toLong())
             .putExtra("headers", headers)
+            .putExtra("dimDark", args.optJSONObject("dim")?.optInt("dark", 0) ?: 0)
+            .putExtra("dimBlur", args.optJSONObject("dim")?.optInt("blur", 0) ?: 0)
         forResult(i) { r -> done(r) }
     }
 

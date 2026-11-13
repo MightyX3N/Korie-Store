@@ -104,8 +104,8 @@ async function handle(f, m) {
       else localStorage.setItem(storageKey(app.id, String(a.key)), JSON.stringify(a.value));
       return true;
     case 'play':
-      if (platformKind === 'android') return call('player.play', { url: a.url, title: a.title || '', subtitle: a.subtitle || '', headers: a.headers || {}, start: a.start || 0 });
-      return new Promise((resolve) => { videoDone = resolve; runner.video = { url: a.url, title: a.title || '', start: a.start || 0 }; });
+      if (platformKind === 'android') return call('player.play', { url: a.url, title: a.title || '', subtitle: a.subtitle || '', headers: a.headers || {}, start: a.start || 0, dim: { dark: settings.dimDark || 0, blur: settings.dimBlur || 0 } });
+      return new Promise((resolve) => { videoDone = resolve; runner.video = { url: a.url, title: a.title || '', start: a.start || 0, dimmed: true }; });
     case 'openWeb':
       if (!/^https?:\/\//.test(a.url || '')) throw new Error('only http and https pages');
       if (platformKind === 'android') return call('web.open', { url: a.url, userAgent: a.userAgent || '' });

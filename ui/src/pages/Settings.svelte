@@ -12,6 +12,7 @@
     { id: 'look', label: 'Look' },
     { id: 'backgrounds', label: 'Backgrounds' },
     { id: 'rows', label: 'Home rows' },
+    { id: 'videos', label: 'Videos' },
     { id: 'repos', label: 'Repositories' },
     { id: 'device', label: 'This device' },
     { id: 'about', label: 'About' },
@@ -122,6 +123,21 @@
           </div>
         {/each}
       </div>
+    {:else if ui.settingsSection === 'videos'}
+      <h2>Dim videos</h2>
+      <p class="hint">For a car: videos played by apps (in the device’s own player) are darkened or blurred, so the picture doesn’t draw the driver’s eyes while the sound plays as usual. The player gets a button to turn it off and on.</p>
+      <div class="choices wrap" data-row data-pt="dim-dark">
+        {#each [0, 25, 50, 75, 90, 100] as v}
+          <button class="choice small" class:on={settings.dimDark === v} onclick={() => set('dimDark', v)}><b>{v === 0 ? 'Not darker' : v === 100 ? 'Black' : `${v} % darker`}</b>{#if v === 100}<span>Sound only</span>{/if}</button>
+        {/each}
+      </div>
+      <h2>Blur</h2>
+      <div class="choices" data-row data-pt="dim-blur">
+        {#each [[0, 'No blur'], [1, 'Light blur'], [2, 'Strong blur']] as [v, l]}
+          <button class="choice small" class:on={settings.dimBlur === v} onclick={() => set('dimBlur', v)}><b>{l}</b></button>
+        {/each}
+      </div>
+      {#if device.platform === 'android'}<p class="hint">Blurring needs Android 12 or newer; older devices darken only.</p>{/if}
     {:else if ui.settingsSection === 'repos'}
       <h2>Repositories</h2>
       <p class="hint">The Store shows the launcher apps and Android apps in these. Only add repositories you trust: their apps run on this device.</p>
