@@ -31,6 +31,35 @@
       ]
     },
     {
+      "id": "korie.freefilms",
+      "name": "Free Films",
+      "type": "content",
+      "version": "1.1.0",
+      "author": "Korie",
+      "description": "Films anyone may watch, streamed from the Internet Archive: silent classics in the public domain in both the EU and the US, and the Blender Foundation's open movies (CC BY). They show under Films.",
+      "access": "sandbox",
+      "permissions": [
+        "internet"
+      ],
+      "hosts": [
+        "archive.org",
+        "*.archive.org"
+      ],
+      "path": "addons/korie.freefilms",
+      "files": [
+        {
+          "name": "addon.json",
+          "size": 457,
+          "sha256": "99152390f2028708fb0ae1e5e9330bb9cf55ae321d0fab598719b9a9a8fec2ac"
+        },
+        {
+          "name": "main.lua",
+          "size": 17272,
+          "sha256": "243686cd61b3aa02680ba1f65400d4823bcff8515203f641031b61e1493ca354"
+        }
+      ]
+    },
+    {
       "id": "korie.romm",
       "name": "RomM",
       "type": "content",
