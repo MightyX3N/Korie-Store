@@ -2,7 +2,7 @@
 	"id": "korie.romm",
 	"name": "RomM",
 	"type": "content",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"author": "Korie",
 	"description": "Your games from a RomM server, under Games: what you played last, new games, and every platform. Play opens RomM's own player full screen; Back (Esc on a computer) returns to Korie. Type your server's address, user name and password in the settings.",
 	"main": "main.lua",

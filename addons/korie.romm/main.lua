@@ -158,7 +158,7 @@ function A.browse_roms(answers, st)
     if #its > 0 then rows[#rows + 1] = { id = "p" .. tostring(p.id), title = tostring(p.name), items = its } end
   end
   local home = {}
-  if #played > 0 then home[1] = { id = "h-played", title = "Games: continue playing", items = played } end
+  if #played > 0 then home[1] = { id = "h-played", title = "Continue playing", items = played } end
   return { games = rows, home = home }
 end
 

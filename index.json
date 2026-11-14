@@ -34,7 +34,7 @@
       "id": "korie.romm",
       "name": "RomM",
       "type": "content",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Korie",
       "description": "Your games from a RomM server, under Games: what you played last, new games, and every platform. Play opens RomM's own player full screen; Back (Esc on a computer) returns to Korie. Type your server's address, user name and password in the settings.",
       "access": "sandbox",
@@ -70,12 +70,12 @@
         {
           "name": "addon.json",
           "size": 863,
-          "sha256": "f420260a1cf7a5a7ec232caac08763bacca3c91c7f40221a29707de3479ce548"
+          "sha256": "7d92a40107001666aa21608e83bd8b5e3dbed82b4ae642bc016b5dce5202c81b"
         },
         {
           "name": "main.lua",
-          "size": 7091,
-          "sha256": "9acd9b83a28bdfeea8f082e3e9da95478f886b1ccac3f83a49db11f0e2429319"
+          "size": 7084,
+          "sha256": "d4a66ce8d58f497a00eaba89289400af28cea180f6277e24ea663f570bf28c38"
         }
       ]
     },
@@ -83,7 +83,7 @@
       "id": "korie.stremio",
       "name": "Stremio",
       "type": "content",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Korie",
       "description": "Films, series, channels and live TV from Stremio add-ons. Add each add-on's address (its manifest.json) in the settings: films go under Films, series and channels under Series, TV under Live TV, and Search asks them too. Streams play when an add-on gives a web address for them; add-ons that only give torrents can't be played.",
       "access": "sandbox",
@@ -110,12 +110,12 @@
         {
           "name": "addon.json",
           "size": 860,
-          "sha256": "acf5e7945aafc86b22a390c89688691747115d53edc6e1805ad4c3cb36910b6c"
+          "sha256": "d7026dd854c5a2d9fdc15b8fe7dd0ffde96b91d75f36ee6a097213b626c49996"
         },
         {
           "name": "main.lua",
-          "size": 11077,
-          "sha256": "d2e1ea9fdbdca4ae389f6e1e4e47d23da6b72a838f1a92c62537f9e9138df208"
+          "size": 11102,
+          "sha256": "313208c36e16c3edfc9a35e6d5f884b82f41e7496e49300e31f9142d0c7919b6"
         }
       ]
     }

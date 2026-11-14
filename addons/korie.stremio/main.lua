@@ -141,8 +141,8 @@ function A.browse_catalogs(answers, state)
     end
   end
   -- Home: the first films row and the first series row
-  if out.films[1] then out.home[#out.home + 1] = { id = "h-films", title = out.films[1].title, items = out.films[1].items } end
-  if out.series[1] then out.home[#out.home + 1] = { id = "h-series", title = out.series[1].title, items = out.series[1].items } end
+  if out.films[1] then out.home[#out.home + 1] = { id = "h-films", title = out.films[1].title .. " films", items = out.films[1].items } end
+  if out.series[1] then out.home[#out.home + 1] = { id = "h-series", title = out.series[1].title .. " series", items = out.series[1].items } end
   return out
 end
 

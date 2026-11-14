@@ -2,7 +2,7 @@
 	"id": "korie.stremio",
 	"name": "Stremio",
 	"type": "content",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"author": "Korie",
 	"description": "Films, series, channels and live TV from Stremio add-ons. Add each add-on's address (its manifest.json) in the settings: films go under Films, series and channels under Series, TV under Live TV, and Search asks them too. Streams play when an add-on gives a web address for them; add-ons that only give torrents can't be played.",
 	"main": "main.lua",
