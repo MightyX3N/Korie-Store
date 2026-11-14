@@ -1,0 +1,16 @@
+{
+	"id": "korie.drtv",
+	"name": "DRTV",
+	"type": "content",
+	"version": "1.0.0",
+	"author": "Korie",
+	"description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. DR only streams to Denmark.",
+	"main": "main.lua",
+	"access": "sandbox",
+	"permissions": [
+		"internet"
+	],
+	"hosts": [
+		"*.dr-massive.com"
+	]
+}

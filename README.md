@@ -1,29 +1,33 @@
 # Korie Store
 
-The apps, add-ons and themes in [Korie](https://github.com/MightyX3N/Korie)'s Store. Korie
-reads this repository's `index.json`:
+Add-ons for [Korie](https://github.com/MightyX3N/Korie), the media centre. Korie reads
+this repository's `index.json` and installs from Store in its menu:
 
     https://raw.githubusercontent.com/MightyX3N/korie-store/main/index.json
 
 ## What's here
 
-| Folder | What it is |
+| Add-on | What it adds |
 | --- | --- |
-| `apps/<id>/` | Korie apps: `app.json` plus the app's files. An app can have a client part (its screens) and a server part (`server/main.js`, run on the Korie server). |
-| `addons/<id>/` | Add-ons for an app: `addon.json` says which app (`for`), what kind and which versions of the app it works with. |
-| `themes/<id>/` | Themes: `theme.json` with colours, font and background, and stylesheets for apps that allow them. |
+| [DRTV](addons/korie.drtv) | DR's streaming service: films under Films, series and categories under Series, DR's channels under Live TV. |
+| [Stremio](addons/korie.stremio) | Stremio add-ons (Cinemeta and any you add in its settings): films, series, channels and TV. |
+| [RomM](addons/korie.romm) | Games from your RomM server under Games, played in RomM's own player. |
 
-Theater, Korie's films/series/music app, comes with every Korie server, so it isn't
-listed here; its add-ons are (`drtv`, `stremio`), and themes can style it (`nordlys`).
+Each add-on is a folder named after its id with an `addon.json` and its Lua code. Add-ons run
+in Korie's sandbox: they can only fetch from the hosts they list (and, with
+`hosts_from_settings`, the addresses an admin types into their settings), and an admin is
+asked before one may use the internet. How add-ons are written is in Korie's
+[docs/ADDONS.md](https://github.com/MightyX3N/Korie/blob/main/docs/ADDONS.md).
 
-## Adding something
+## Adding or changing an add-on
 
-Add its folder, then write the index and commit both:
+Change its folder (raise `version` in `addon.json` so Korie offers the update), then write the
+index and commit both:
 
-    node tools/repoindex.mjs .
+    python3 tools/build_index.py
 
-How apps, add-ons and themes are made is in Korie's docs
-([apps](https://github.com/MightyX3N/Korie/blob/main/docs/APPS.md)).
+`index.json` lists every file with its sha256; Korie refuses a file that doesn't match. A check
+on GitHub fails when the index is out of date.
 
-This repository used to be PlayTheater. PlayTheater became Theater inside Korie; its
-earlier releases are still under Releases.
+This repository used to be PlayTheater and PlayBigScreen; their earlier releases are still
+under Releases.

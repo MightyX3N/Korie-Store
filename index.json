@@ -1,100 +1,123 @@
 {
   "name": "Korie Store",
-  "description": "Apps, add-ons and themes for Korie.",
-  "apps": [
-    {
-      "id": "romm",
-      "name": "RomM",
-      "version": "1.1.0",
-      "subtitle": "Your game library, played in the browser",
-      "description": "Browse the games on your RomM server by platform, with their covers, and play them with RomM's built-in emulator. Continue playing and recently added games show up on the home screen, and Search finds games too. Needs a RomM server.",
-      "author": "Korie",
-      "category": "Play",
-      "color": "#3b2a7a",
-      "mode": "fullscreen",
-      "icon": "icon.svg",
-      "parts": [
-        "client"
-      ],
-      "permissions": [],
-      "path": "apps/romm/",
-      "files": {
-        "app.css": "fe6668463654821bcc172d636a7728bf30f44ea43271091c1de10f5232f441ef",
-        "app.js": "dfc3fc4c9a8bde40561e0250086de490e5c60b73925b5377880c306b179ef3b9",
-        "app.json": "31241c71d77a684061513a3f1c0da350a0799836c53031692bf50c81b09eca22",
-        "background.jpg": "cb5c7a8cfaeffe4ac2c76701ddf7a08ec9f4e89dd90b465b4f05409354dd07c9",
-        "icon.svg": "d97aacef5bc2458ee44f69dedbfea4a6452f6353462fbad8b31ce00a66135feb",
-        "index.html": "9d4a0fbff3cb98ae569aaec1fb03a264008989be7c1db195486d7c67eae67569"
-      }
-    }
-  ],
+  "format": 1,
   "addons": [
     {
-      "id": "drtv",
+      "id": "korie.drtv",
       "name": "DRTV",
-      "version": "1.1.0",
-      "for": "theater",
-      "kind": "source",
-      "appVersions": "",
-      "description": "Films, series, programs and live channels from DRTV, the Danish public broadcaster. DR only plays them in Denmark, so the server has to be there.",
+      "type": "content",
+      "version": "1.0.0",
       "author": "Korie",
-      "path": "addons/drtv/",
-      "files": {
-        "addon.json": "29bb5573d767b46762f75299f1923edaf70b8bcba3f7c380103d7fbfc0b56a85",
-        "plugin.js": "1fd0155db0d9efe86c9bd5e2d6856a68432dca3b84606a2bce728732802b5169",
-        "plugin.json": "1b50fdf24990aaeba8de7b53967861c3d28c61f04682ba076e0fa7f2590a839f"
-      }
+      "description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. DR only streams to Denmark.",
+      "access": "sandbox",
+      "permissions": [
+        "internet"
+      ],
+      "hosts": [
+        "*.dr-massive.com"
+      ],
+      "path": "addons/korie.drtv",
+      "files": [
+        {
+          "name": "addon.json",
+          "size": 472,
+          "sha256": "8637d6b5d493e0940f283e043c56713b5d879bc3a3a14bd8cd68cf334bdc4386"
+        },
+        {
+          "name": "main.lua",
+          "size": 14911,
+          "sha256": "ecd905d9e73885b0355a7782c5dfe644907f857dec620cef002045624a202614"
+        }
+      ]
     },
     {
-      "id": "stremio",
-      "name": "Stremio addons",
+      "id": "korie.romm",
+      "name": "RomM",
+      "type": "content",
       "version": "1.0.0",
-      "for": "theater",
-      "kind": "source",
-      "appVersions": "",
-      "description": "Browse and play from Stremio addons. Add each addon's manifest address; catalogs, details and streams come from them, and nothing is saved on the server.",
       "author": "Korie",
-      "path": "addons/stremio/",
-      "files": {
-        "addon.json": "25cf7cebca49f13d371af49916008cfaece71ba8e188f6e467395020d803a8bb",
-        "plugin.js": "e681a1d57b70be6641d26289d248a87b716e2dba0dae71441f8b25aaa2f0ec43",
-        "plugin.json": "5665f4af7a4dc86350b5a46d764b83b6f8fdc34c8c3ed3429f97e642282f8186"
-      }
-    }
-  ],
-  "themes": [
-    {
-      "id": "nordlys",
-      "name": "Nordlys",
-      "version": "2.0.0",
-      "description": "A winter night with the northern lights: deep blue-green dark, a faint aurora behind the pages, ice-blue buttons and a wide, friendly display face.",
-      "author": "Korie",
-      "preview": "preview.jpg",
-      "vars": {
-        "accent": "#a8dcff",
-        "ink": "#eef6f7",
-        "dim": "#9fb7bd",
-        "faint": "#6c8890",
-        "shade": "#07141a",
-        "panel": "rgba(10, 28, 36, 0.86)",
-        "glass": "rgba(10, 28, 36, 0.6)",
-        "line": "rgba(160, 230, 255, 0.08)"
-      },
-      "apps": [
-        "theater"
+      "description": "Your games from a RomM server, under Games: what you played last, new games, and every platform. Play opens RomM's own player full screen; Back (Esc on a computer) returns to Korie. Type your server's address, user name and password in the settings.",
+      "access": "sandbox",
+      "permissions": [
+        "internet"
       ],
-      "path": "themes/nordlys/",
-      "files": {
-        "fonts/OFL-bricolage-grotesque.txt": "923f4ddf0fd39f9b7794ab0df7332f3d95dc43e8ad7ec2289d6d9e8491177f51",
-        "fonts/OFL-figtree.txt": "ee23e6c84000126692e112ff067b456470493349f993ceaa8b4d3766dd6fad5d",
-        "fonts/bricolage-700.woff2": "4c373ce3c1cca41c864eb3e27c059a59fc6310547ab9c9b6cd780d387ba24206",
-        "fonts/figtree-400.woff2": "8f98dd642986f1fa39c45b89665a57372897c235b36028e0e4a136e43dc5f8ab",
-        "fonts/figtree-600.woff2": "367d713287918784702563518f59239989da815c80d3c7337686b9816635a08b",
-        "preview.jpg": "876d9fde521ecea3009dae46b6a1188f4c90901b58065d9ef8c3abed83d280fb",
-        "theater.css": "ebf4dd9ea11314d6f0f7e3e696701b1e090acd09ff91f30be116457f58de5c43",
-        "theme.json": "0e9749833715411d327f2ab20c28f8e421b015daec3e483c87f74576217fceba"
-      }
+      "hosts": [],
+      "hosts_from_settings": true,
+      "games": true,
+      "settings": [
+        {
+          "key": "server",
+          "label": "RomM server",
+          "type": "text",
+          "help": "Its address, like http://192.168.1.20:8080",
+          "default": ""
+        },
+        {
+          "key": "username",
+          "label": "User name",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "key": "password",
+          "label": "Password",
+          "type": "password",
+          "default": ""
+        }
+      ],
+      "path": "addons/korie.romm",
+      "files": [
+        {
+          "name": "addon.json",
+          "size": 863,
+          "sha256": "f420260a1cf7a5a7ec232caac08763bacca3c91c7f40221a29707de3479ce548"
+        },
+        {
+          "name": "main.lua",
+          "size": 7091,
+          "sha256": "9acd9b83a28bdfeea8f082e3e9da95478f886b1ccac3f83a49db11f0e2429319"
+        }
+      ]
+    },
+    {
+      "id": "korie.stremio",
+      "name": "Stremio",
+      "type": "content",
+      "version": "1.0.0",
+      "author": "Korie",
+      "description": "Films, series, channels and live TV from Stremio add-ons. Add each add-on's address (its manifest.json) in the settings: films go under Films, series and channels under Series, TV under Live TV, and Search asks them too. Streams play when an add-on gives a web address for them; add-ons that only give torrents can't be played.",
+      "access": "sandbox",
+      "permissions": [
+        "internet"
+      ],
+      "hosts": [
+        "v3-cinemeta.strem.io"
+      ],
+      "hosts_from_settings": true,
+      "settings": [
+        {
+          "key": "addons",
+          "label": "Stremio add-ons",
+          "type": "list",
+          "help": "The address of each add-on's manifest.json (stremio:// addresses work too).",
+          "default": [
+            "https://v3-cinemeta.strem.io/manifest.json"
+          ]
+        }
+      ],
+      "path": "addons/korie.stremio",
+      "files": [
+        {
+          "name": "addon.json",
+          "size": 860,
+          "sha256": "acf5e7945aafc86b22a390c89688691747115d53edc6e1805ad4c3cb36910b6c"
+        },
+        {
+          "name": "main.lua",
+          "size": 11077,
+          "sha256": "d2e1ea9fdbdca4ae389f6e1e4e47d23da6b72a838f1a92c62537f9e9138df208"
+        }
+      ]
     }
-  ],
-  "apks": []
+  ]
 }

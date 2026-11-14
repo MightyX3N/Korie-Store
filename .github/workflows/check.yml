@@ -1,5 +1,5 @@
 name: Check
-# The Store's index.json must match its folders (run: node tools/repoindex.mjs .).
+# index.json must match the add-on folders (run: python3 tools/build_index.py).
 on:
   push:
   pull_request:
@@ -8,6 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: node tools/repoindex.mjs . --check
+      - run: python3 tools/build_index.py --check
