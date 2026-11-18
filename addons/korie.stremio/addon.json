@@ -2,9 +2,9 @@
 	"id": "korie.stremio",
 	"name": "Stremio",
 	"type": "content",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"author": "Korie",
-	"description": "Each person signs in with their own Stremio account. Their Stremio add-ons put films and series in their Films and Series, Search asks them, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
+	"description": "Films and series from Stremio add-ons. Add the Stremio add-ons you use on its page and everyone gets them, no Stremio account needed. Someone who signs in to Stremio also gets their own Stremio add-ons, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
 	"main": "main.lua",
 	"access": "sandbox",
 	"permissions": [
@@ -18,10 +18,18 @@
 	"accounts": {
 		"who": "person",
 		"label": "Stremio account",
-		"help": "Korie keeps only Stremio's sign-in key, never the password.",
+		"help": "Signing in is optional. Korie keeps only Stremio's sign-in key, never the password.",
 		"fields": [
-			{ "key": "email", "label": "E-mail", "type": "text" },
-			{ "key": "password", "label": "Password", "type": "password" }
+			{
+				"key": "email",
+				"label": "E-mail",
+				"type": "text"
+			},
+			{
+				"key": "password",
+				"label": "Password",
+				"type": "password"
+			}
 		]
 	}
 }

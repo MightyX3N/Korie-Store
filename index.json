@@ -152,9 +152,9 @@
       "id": "korie.stremio",
       "name": "Stremio",
       "type": "content",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "Korie",
-      "description": "Each person signs in with their own Stremio account. Their Stremio add-ons put films and series in their Films and Series, Search asks them, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
+      "description": "Films and series from Stremio add-ons. Add the Stremio add-ons you use on its page and everyone gets them, no Stremio account needed. Someone who signs in to Stremio also gets their own Stremio add-ons, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
       "access": "sandbox",
       "permissions": [
         "internet"
@@ -167,13 +167,13 @@
       "files": [
         {
           "name": "addon.json",
-          "size": 914,
-          "sha256": "91708feeb0b242c0e0847da196deece89b64ced999d66a5829d4438597007a1c"
+          "size": 1030,
+          "sha256": "d39a259d5f6b1f3e828af0f2af1c0bd52d712a01455c373ad69e0d8652ff7d7d"
         },
         {
           "name": "main.lua",
-          "size": 20200,
-          "sha256": "fc65129c72291a946b7ae1d309122ce0495c8156d189d7ea3ccd8eb45212c91e"
+          "size": 28171,
+          "sha256": "77acd90f754b29bee07fdb29f4d148dfe290a8f0f0b01c91547b57e516f663c0"
         }
       ]
     }

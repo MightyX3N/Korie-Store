@@ -59,8 +59,8 @@ local function addon_of(a)
       catalogs[#catalogs + 1] = { type = c.type, id = c.id, name = c.name or c.id, required = required, search = search }
     end
   end
-  return { base = base, name = m.name or m.id or base, resources = m.resources or {}, types = m.types or {},
-           prefixes = m.idPrefixes, catalogs = catalogs }
+  return { base = base, url = a.transportUrl, name = m.name or m.id or base, resources = m.resources or {}, types = m.types or {},
+           prefixes = m.idPrefixes, catalogs = catalogs, protected = type(a.flags) == "table" and a.flags.protected == true }
 end
 
 local function host_of(url) return url:match("^https?://([^/:]+)") end
@@ -123,8 +123,24 @@ local function item(m)
   return v
 end
 
-local row_id
+local row_id, house_data
 local function signed_in(ctx) return type(ctx.account) == "table" and type(ctx.account.key) == "string" end
+
+-- the add-ons added in Korie for everyone (no Stremio account needed)
+local function house_addons(ctx) return (type(ctx.house) == "table" and type(ctx.house.addons) == "table") and ctx.house.addons or {} end
+
+-- what a person uses: their own Stremio account's add-ons (if they signed in) and the house's
+local function merged(own, house)
+  local out, seen = {}, {}
+  for _, l in ipairs({ own or {}, house or {} }) do
+    for _, a in ipairs(l) do
+      if type(a) == "table" and a.base and not seen[a.base] then seen[a.base] = true; out[#out + 1] = a end
+    end
+  end
+  return out
+end
+local function all_addons(ctx) return merged(signed_in(ctx) and ctx.account.addons or {}, house_addons(ctx)) end
+local NONE = "No Stremio add-ons yet: add some in Korie's admin (Add-ons → Stremio)"
 
 -- a catalogue's row: the same id whatever else changes, so an admin's "don't show this" sticks
 row_id = function(a, cat) return "cat|" .. a.base .. "|" .. cat.type .. "|" .. cat.id end
@@ -175,12 +191,31 @@ end
 -- What their add-ons offer: their catalogues as rows, Stremio's Continue Watching on Home ----------
 
 function A.browse(ctx)
-  if not signed_in(ctx) then return { films = {}, series = {}, live = {}, home = {} } end
+  if not signed_in(ctx) then
+    -- no Stremio account: the house's add-ons only
+    return A.browse_catalogs_for(house_addons(ctx), {}, nil)
+  end
   local key = ctx.account.key
   -- their add-ons as they are now (changed in Stremio, Korie follows), and their library
   return { fetch = { api("addonCollectionGet", { type = "AddonCollectionGet", authKey = key, update = true }),
-                     api("datastoreGet", { authKey = key, collection = "libraryItem", ids = {}, all = true }) },
-           next = "browse_collection", state = { key = key, email = ctx.account.email } }
+                     api("datastoreGet", { authKey = key, collection = "libraryItem", ids = { __array = true }, all = true }) },
+           next = "browse_collection", state = { key = key, email = ctx.account.email, house = house_addons(ctx) } }
+end
+
+-- every add-on's catalogues as rows (cw: Continue Watching; save: the account to keep)
+function A.browse_catalogs_for(list, cw, save)
+  local jobs, info = {}, {}
+  for _, x in ipairs(shown_catalogs(list)) do
+    jobs[#jobs + 1] = { url = x.a.base .. "/catalog/" .. enc(x.cat.type) .. "/" .. enc(x.cat.id) .. ".json", as = "json" }
+    info[#info + 1] = { type = x.cat.type, title = x.cat.name, addon = x.a.name, id = row_id(x.a, x.cat) }
+  end
+  local state = { info = info, many = #list > 1, cw = cw }
+  if #jobs == 0 then
+    local out = A.browse_catalogs({}, state)
+    out.save_account = save
+    return out
+  end
+  return { fetch = jobs, cache = 1800, next = "browse_catalogs", state = state, save_account = save }
 end
 
 function A.browse_collection(ans, st)
@@ -208,19 +243,7 @@ function A.browse_collection(ans, st)
     if v then cw[#cw + 1] = v end
     if #cw >= 20 then break end
   end
-  -- every add-on's catalogues
-  local jobs, info = {}, {}
-  for _, x in ipairs(shown_catalogs(c.addons)) do
-    jobs[#jobs + 1] = { url = x.a.base .. "/catalog/" .. enc(x.cat.type) .. "/" .. enc(x.cat.id) .. ".json", as = "json" }
-    info[#info + 1] = { type = x.cat.type, title = x.cat.name, addon = x.a.name, id = row_id(x.a, x.cat) }
-  end
-  local state = { info = info, many = #c.addons > 1, cw = cw }
-  if #jobs == 0 then
-    local out = A.browse_catalogs({}, state)
-    out.save_account = c
-    return out
-  end
-  return { fetch = jobs, cache = 1800, next = "browse_catalogs", state = state, save_account = c }
+  return A.browse_catalogs_for(merged(c.addons, st.house), cw, c)
 end
 
 function A.browse_catalogs(answers, st)
@@ -261,30 +284,173 @@ local function offers(a)
   return table.concat(what, ", ")
 end
 
-function A.about(ctx)
-  if not signed_in(ctx) then return { sections = {}, rows = {} } end
-  local who = (ctx.person and ctx.person.name) or "Their"
-  local items = {}
-  for _, a in ipairs(ctx.account.addons or {}) do items[#items + 1] = { title = a.name, subtitle = offers(a) } end
+local function manifest_url(s)
+  s = tostring(s or ""):gsub("^%s+", ""):gsub("%s+$", ""):gsub("^stremio://", "https://")
+  if not s:match("^https://") then return nil end
+  if not s:match("/manifest%.json$") then s = s:gsub("/+$", "") .. "/manifest.json" end
+  return s
+end
+
+-- what's kept for the house: its add-ons and their hosts (which Korie then lets the add-on fetch from)
+house_data = function(list)
+  local hosts, seen = {}, {}
+  for _, a in ipairs(list) do
+    local h = host_of(a.base)
+    if h and not seen[h] then seen[h] = true; hosts[#hosts + 1] = h:lower() end
+  end
+  if #list == 0 then list = { __array = true } end
+  if #hosts == 0 then hosts = { __array = true } end
+  return { addons = list, hosts = hosts }
+end
+
+local HELP = "The add-on's address (its manifest.json, or a stremio:// link), from the add-on's own page or stremio-addons.net."
+
+local function rows_of(list)
   local rows = {}
   local kinds = { movie = "films", series = "series", tv = "live" }
-  for _, x in ipairs(shown_catalogs(ctx.account.addons)) do
+  for _, x in ipairs(shown_catalogs(list)) do
     local title = x.cat.name
-    if #ctx.account.addons > 1 then title = title .. " · " .. x.a.name end
+    if #list > 1 then title = title .. " · " .. x.a.name end
     rows[#rows + 1] = { id = row_id(x.a, x.cat), title = title .. " (" .. (kinds[x.cat.type] or x.cat.type) .. ")", section = kinds[x.cat.type] or "series" }
   end
+  return rows
+end
+
+function A.about(ctx)
+  if not signed_in(ctx) then
+    -- the house's add-ons: everyone has them, with a Stremio account or not
+    local items = {}
+    for _, a in ipairs(house_addons(ctx)) do
+      items[#items + 1] = { title = a.name, subtitle = offers(a), remove = { call = "remove_house_addon", value = a.url or a.base, label = "Remove" } }
+    end
+    return {
+      sections = { { title = "Stremio add-ons for everyone", items = items,
+        text = "Everyone in Korie gets these, without a Stremio account. Someone who signs in to Stremio below gets their own Stremio add-ons too, and their Continue Watching follows them.",
+        add = { call = "add_house_addon", label = "Add a Stremio add-on", placeholder = "https://.../manifest.json", help = HELP } } },
+      rows = rows_of(house_addons(ctx)),
+    }
+  end
+  local who = (ctx.person and ctx.person.name) or "Their"
+  local items = {}
+  for _, a in ipairs(ctx.account.addons or {}) do
+    local it = { title = a.name, subtitle = offers(a) }
+    -- Stremio's own (Cinemeta, Local Files ...) can't be taken out, in Stremio either
+    if not a.protected and a.url then it.remove = { call = "remove_addon", value = a.url, label = "Remove" } end
+    items[#items + 1] = it
+  end
   return {
-    sections = { { title = who .. "'s Stremio add-ons", text = "From " .. who .. "'s Stremio account (" .. tostring(ctx.account.email or "") .. "). Change them in Stremio; Korie follows.", items = items } },
-    rows = rows,
+    sections = { { title = who .. "'s Stremio add-ons", items = items,
+      text = "From " .. who .. "'s Stremio account (" .. tostring(ctx.account.email or "") .. "), on top of the add-ons for everyone. Adding or removing one here does it in their Stremio too, and changes made in Stremio show up here.",
+      add = { call = "add_addon", label = "Add a Stremio add-on to their account", placeholder = "https://.../manifest.json", help = HELP } } },
+    rows = rows_of(all_addons(ctx)),
   }
+end
+
+-- The house's add-ons: kept by Korie (for everyone), not in any Stremio account
+
+function A.add_house_addon(value, ctx)
+  local url = manifest_url(value)
+  if not url then return { error = "That isn't an add-on's address: it starts with https:// or stremio:// and ends in manifest.json" } end
+  return { fetch = { url = url, as = "full" }, next = "house_got", state = { url = url, list = house_addons(ctx) } }
+end
+
+function A.house_got(ans, st)
+  local m = ans and ans.json
+  if not (ans and ans.ok and type(m) == "table" and m.id and m.resources) then
+    return { error = "There's no Stremio add-on at that address (" .. tostring(ans and ans.status or "no answer") .. ")" }
+  end
+  local x = addon_of({ transportUrl = st.url, manifest = m })
+  if not x then return { error = "That add-on's address can't be used" } end
+  local list = {}
+  for _, a in ipairs(st.list) do
+    if a.base == x.base then return { error = x.name .. " is already one of the add-ons for everyone" } end
+    list[#list + 1] = a
+  end
+  list[#list + 1] = x
+  return { ok = true, save_account = house_data(list) }
+end
+
+function A.remove_house_addon(value, ctx)
+  local list, found = {}, false
+  for _, a in ipairs(house_addons(ctx)) do
+    if a.url == value or a.base == value then found = true else list[#list + 1] = a end
+  end
+  if not found then return { error = "It isn't one of the add-ons for everyone any more" } end
+  return { ok = true, save_account = house_data(list) }
+end
+
+-- Adding and removing add-ons: in their Stremio account itself (addonCollectionSet, as Stremio's
+-- apps do), so Stremio and Korie stay the same. The collection is read fresh and sent back whole.
+
+local function refused(ans)
+  local e = type(ans) == "table" and ans.error
+  local msg = type(e) == "table" and e.message or (type(e) == "string" and e)
+  if msg then return { error = "Stremio said: " .. msg .. ". Sign in to Stremio again here." } end
+  return { error = "Stremio didn't answer: try again" }
+end
+
+function A.add_addon(value, ctx)
+  if not signed_in(ctx) then return { error = "Sign in to Stremio first" } end
+  local url = manifest_url(value)
+  if not url then return { error = "That isn't an add-on's address: it starts with https:// or stremio:// and ends in manifest.json" } end
+  return { fetch = { { url = url, as = "full" },
+                     api("addonCollectionGet", { type = "AddonCollectionGet", authKey = ctx.account.key, update = true }) },
+           next = "add_got", state = { url = url, key = ctx.account.key, email = ctx.account.email } }
+end
+
+function A.add_got(ans, st)
+  local m = ans[1] and ans[1].json
+  if not (ans[1] and ans[1].ok and type(m) == "table" and m.id and m.resources) then
+    return { error = "There's no Stremio add-on at that address (" .. tostring(ans[1] and ans[1].status or "no answer") .. ")" }
+  end
+  local list = type(ans[2]) == "table" and type(ans[2].result) == "table" and ans[2].result.addons
+  if type(list) ~= "table" then return refused(ans[2]) end
+  for _, a in ipairs(list) do
+    if a.transportUrl == st.url or (type(a.manifest) == "table" and a.manifest.id == m.id) then
+      return { error = (m.name or "That add-on") .. " is already one of their add-ons" }
+    end
+  end
+  list[#list + 1] = { transportUrl = st.url, manifest = m, flags = { official = false, protected = false } }
+  st.list = list
+  return { fetch = api("addonCollectionSet", { type = "AddonCollectionSet", authKey = st.key, addons = list }), next = "collection_set", state = st }
+end
+
+function A.remove_addon(value, ctx)
+  if not signed_in(ctx) then return { error = "Sign in to Stremio first" } end
+  return { fetch = api("addonCollectionGet", { type = "AddonCollectionGet", authKey = ctx.account.key, update = true }),
+           next = "remove_got", state = { url = value, key = ctx.account.key, email = ctx.account.email } }
+end
+
+function A.remove_got(ans, st)
+  local list = type(ans) == "table" and type(ans.result) == "table" and ans.result.addons
+  if type(list) ~= "table" then return refused(ans) end
+  local keep, found = {}, false
+  for _, a in ipairs(list) do
+    if a.transportUrl == st.url then
+      if type(a.flags) == "table" and a.flags.protected then return { error = "Stremio doesn't let that one be removed" } end
+      found = true
+    else
+      keep[#keep + 1] = a
+    end
+  end
+  if not found then return { error = "It isn't one of their add-ons any more" } end
+  st.list = keep
+  return { fetch = api("addonCollectionSet", { type = "AddonCollectionSet", authKey = st.key, addons = keep }), next = "collection_set", state = st }
+end
+
+function A.collection_set(ans, st)
+  if not (type(ans) == "table" and ans.result) then
+    local e = type(ans) == "table" and ans.error
+    return { error = "Stremio didn't keep it" .. (type(e) == "table" and e.message and (": " .. e.message) or "") }
+  end
+  return { ok = true, save_account = collection(st.key, st.email, st.list) }
 end
 
 -- Search: every catalogue of theirs that can search ------------------------------------------------
 
 function A.search(q, ctx)
-  if not signed_in(ctx) then return { items = {} } end
   local jobs = {}
-  for _, a in ipairs(ctx.account.addons or {}) do
+  for _, a in ipairs(all_addons(ctx)) do
     for _, c in ipairs(a.catalogs or {}) do
       if c.search then jobs[#jobs + 1] = { url = a.base .. "/catalog/" .. enc(c.type) .. "/" .. enc(c.id) .. "/search=" .. enc(q) .. ".json", as = "json" } end
     end
@@ -311,12 +477,11 @@ end
 
 function A.open(it, ctx)
   local d = it.data or {}
-  if not signed_in(ctx) then return { error = "Sign in to Stremio first (Korie's admin → Add-ons → Stremio)" } end
   local jobs = {}
-  for _, a in ipairs(ctx.account.addons or {}) do
+  for _, a in ipairs(all_addons(ctx)) do
     if serves(a, "meta", d.type, d.id) then jobs[#jobs + 1] = { url = a.base .. "/meta/" .. enc(d.type) .. "/" .. enc(d.id) .. ".json", as = "json" } end
   end
-  if #jobs == 0 then return { error = "none of your Stremio add-ons knows more about this" } end
+  if #jobs == 0 then return { error = #all_addons(ctx) == 0 and NONE or "none of the Stremio add-ons knows more about this" } end
   return { fetch = jobs, cache = 3600, next = "open_got", state = d }
 end
 
@@ -361,9 +526,9 @@ end
 function A.play(it, ctx)
   local d = it.data or {}
   if not d.type then return { error = "the add-on didn't say what this is" } end
-  if not signed_in(ctx) then return { error = "Sign in to Stremio first (Korie's admin → Add-ons → Stremio)" } end
   local jobs, kinds = {}, {}
-  for _, a in ipairs(ctx.account.addons or {}) do
+  if #all_addons(ctx) == 0 then return { error = NONE } end
+  for _, a in ipairs(all_addons(ctx)) do
     if serves(a, "stream", d.type, d.id) then
       jobs[#jobs + 1] = { url = a.base .. "/stream/" .. enc(d.type) .. "/" .. enc(d.id) .. ".json", as = "json" }
       kinds[#kinds + 1] = "stream"
@@ -373,7 +538,7 @@ function A.play(it, ctx)
       kinds[#kinds + 1] = "subtitles"
     end
   end
-  if #jobs == 0 then return { error = "none of your Stremio add-ons has streams for this: add one that does in Stremio" } end
+  if #jobs == 0 then return { error = "none of the Stremio add-ons has streams for this: add one that does in Korie's admin (Add-ons → Stremio)" } end
   return { fetch = jobs, next = "play_got", state = { kinds = kinds, live = d.type == "tv" } }
 end
 
