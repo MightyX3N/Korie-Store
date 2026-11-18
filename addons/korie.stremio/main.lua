@@ -126,8 +126,15 @@ end
 local row_id, house_data
 local function signed_in(ctx) return type(ctx.account) == "table" and type(ctx.account.key) == "string" end
 
--- the add-ons added in Korie for everyone (no Stremio account needed)
-local function house_addons(ctx) return (type(ctx.house) == "table" and type(ctx.house.addons) == "table") and ctx.house.addons or {} end
+-- Cinemeta (Stremio's own catalogue of films and series) is there from the start, as in Stremio;
+-- it can be removed on the add-on's page like any other
+local CINEMETA = { base = "https://v3-cinemeta.strem.io", url = "https://v3-cinemeta.strem.io/manifest.json", name = "Cinemeta", resources = { "catalog", "meta", "addon_catalog" }, types = { "movie", "series" }, prefixes = { "tt" }, catalogs = { { type = "movie", id = "top", name = "Popular", required = false, search = true }, { type = "series", id = "top", name = "Popular", required = false, search = true }, { type = "movie", id = "year", name = "New", required = true, search = false }, { type = "series", id = "year", name = "New", required = true, search = false }, { type = "movie", id = "imdbRating", name = "Featured", required = false, search = false }, { type = "series", id = "imdbRating", name = "Featured", required = false, search = false }, { type = "series", id = "last-videos", name = "Last videos", required = true, search = false }, { type = "series", id = "calendar-videos", name = "Calendar videos", required = true, search = false } } }
+
+-- the add-ons added in Korie for everyone (no Stremio account needed); Cinemeta until the list is changed
+local function house_addons(ctx)
+  if type(ctx.house) == "table" and type(ctx.house.addons) == "table" then return ctx.house.addons end
+  return { CINEMETA }
+end
 
 -- what a person uses: their own Stremio account's add-ons (if they signed in) and the house's
 local function merged(own, house)

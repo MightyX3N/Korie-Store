@@ -152,7 +152,7 @@
       "id": "korie.stremio",
       "name": "Stremio",
       "type": "content",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "author": "Korie",
       "description": "Films and series from Stremio add-ons. Add the Stremio add-ons you use on its page and everyone gets them, no Stremio account needed. Someone who signs in to Stremio also gets their own Stremio add-ons, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
       "access": "sandbox",
@@ -168,12 +168,12 @@
         {
           "name": "addon.json",
           "size": 1030,
-          "sha256": "d39a259d5f6b1f3e828af0f2af1c0bd52d712a01455c373ad69e0d8652ff7d7d"
+          "sha256": "afc8f6ed943e8c6c70956f00e90a8222753f8bb904176f9e78edb57cd4df937e"
         },
         {
           "name": "main.lua",
-          "size": 28171,
-          "sha256": "77acd90f754b29bee07fdb29f4d148dfe290a8f0f0b01c91547b57e516f663c0"
+          "size": 29349,
+          "sha256": "dd057fb3784c431af0b9712cdef6b152e694f917839c102ec1f24e0d9e45922e"
         }
       ]
     }
