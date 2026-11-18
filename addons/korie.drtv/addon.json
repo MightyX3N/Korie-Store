@@ -2,15 +2,32 @@
 	"id": "korie.drtv",
 	"name": "DRTV",
 	"type": "content",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"author": "Korie",
-	"description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. DR only streams to Denmark.",
+	"description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. Works without a login; with the house's DR login each person uses one of its DR profiles, with their own Continue watching and My list. DR only streams to Denmark.",
 	"main": "main.lua",
 	"access": "sandbox",
 	"permissions": [
 		"internet"
 	],
 	"hosts": [
-		"*.dr-massive.com"
+		"*.dr-massive.com",
+		"login.dr.dk"
+	],
+	"accounts": {
+		"who": "house",
+		"label": "DR account",
+		"help": "One DR login for the house. Each person in Korie uses one of the account's DR profiles, so DR's Continue watching, My list and child profiles follow them. Watching works without a login too.",
+		"profiles": true,
+		"fields": [
+			{ "key": "email", "label": "E-mail", "type": "text" },
+			{ "key": "password", "label": "Password", "type": "password" }
+		]
+	},
+	"settings": [
+		{ "key": "films", "label": "Films", "type": "toggle", "help": "DRTV films in Films", "default": true },
+		{ "key": "series", "label": "Series", "type": "toggle", "help": "DRTV series in Series", "default": true },
+		{ "key": "categories", "label": "Categories", "type": "toggle", "help": "Dokumentar, Krimi, Nyheder ... as folders in Series", "default": true },
+		{ "key": "quality", "label": "Picture", "type": "choice", "options": [["best", "Best"], ["save", "Save data"]], "default": "best" }
 	]
 }

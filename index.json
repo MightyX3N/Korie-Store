@@ -6,27 +6,67 @@
       "id": "korie.drtv",
       "name": "DRTV",
       "type": "content",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "author": "Korie",
-      "description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. DR only streams to Denmark.",
+      "description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. Works without a login; with the house's DR login each person uses one of its DR profiles, with their own Continue watching and My list. DR only streams to Denmark.",
       "access": "sandbox",
       "permissions": [
         "internet"
       ],
       "hosts": [
-        "*.dr-massive.com"
+        "*.dr-massive.com",
+        "login.dr.dk"
+      ],
+      "settings": [
+        {
+          "key": "films",
+          "label": "Films",
+          "type": "toggle",
+          "help": "DRTV films in Films",
+          "default": true
+        },
+        {
+          "key": "series",
+          "label": "Series",
+          "type": "toggle",
+          "help": "DRTV series in Series",
+          "default": true
+        },
+        {
+          "key": "categories",
+          "label": "Categories",
+          "type": "toggle",
+          "help": "Dokumentar, Krimi, Nyheder ... as folders in Series",
+          "default": true
+        },
+        {
+          "key": "quality",
+          "label": "Picture",
+          "type": "choice",
+          "options": [
+            [
+              "best",
+              "Best"
+            ],
+            [
+              "save",
+              "Save data"
+            ]
+          ],
+          "default": "best"
+        }
       ],
       "path": "addons/korie.drtv",
       "files": [
         {
           "name": "addon.json",
-          "size": 472,
-          "sha256": "8637d6b5d493e0940f283e043c56713b5d879bc3a3a14bd8cd68cf334bdc4386"
+          "size": 1571,
+          "sha256": "0e95e72dcab1fc98b7755ccccd98000aca832d710c800e8a59b7e1bd7637dd45"
         },
         {
           "name": "main.lua",
-          "size": 14911,
-          "sha256": "ecd905d9e73885b0355a7782c5dfe644907f857dec620cef002045624a202614"
+          "size": 28544,
+          "sha256": "b7d05080b498acbc21d89a82c1b3ff777c48023c649c19a6e0de9be92b929fcb"
         }
       ]
     },
@@ -34,7 +74,7 @@
       "id": "korie.freefilms",
       "name": "Free Films",
       "type": "content",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "Korie",
       "description": "Films anyone may watch, streamed from the Internet Archive: silent classics in the public domain in both the EU and the US, and the Blender Foundation's open movies (CC BY). They show under Films.",
       "access": "sandbox",
@@ -50,12 +90,12 @@
         {
           "name": "addon.json",
           "size": 457,
-          "sha256": "99152390f2028708fb0ae1e5e9330bb9cf55ae321d0fab598719b9a9a8fec2ac"
+          "sha256": "dd335ab60271cf9b91f95cb33f2f651a304bd82b6baf4b89933d2000215deee0"
         },
         {
           "name": "main.lua",
-          "size": 17272,
-          "sha256": "243686cd61b3aa02680ba1f65400d4823bcff8515203f641031b61e1493ca354"
+          "size": 17518,
+          "sha256": "da023d426012d40532ae04174a2882fc744c29b5d72a79a45bb7f88e48ed3014"
         }
       ]
     },
@@ -63,7 +103,7 @@
       "id": "korie.romm",
       "name": "RomM",
       "type": "content",
-      "version": "1.0.1",
+      "version": "2.0.0",
       "author": "Korie",
       "description": "Your games from a RomM server, under Games: what you played last, new games, and every platform. Play opens RomM's own player full screen; Back (Esc on a computer) returns to Korie. Type your server's address, user name and password in the settings.",
       "access": "sandbox",
@@ -99,12 +139,12 @@
         {
           "name": "addon.json",
           "size": 863,
-          "sha256": "7d92a40107001666aa21608e83bd8b5e3dbed82b4ae642bc016b5dce5202c81b"
+          "sha256": "b44fbcbcd8cef8fb88daf80ccfa356138eec2c5e23398e8654a316586602f0dd"
         },
         {
           "name": "main.lua",
-          "size": 7084,
-          "sha256": "d4a66ce8d58f497a00eaba89289400af28cea180f6277e24ea663f570bf28c38"
+          "size": 7434,
+          "sha256": "79a85428230d0994c58f2ec266a73e84d17c666d882c05795adbc37a46f15bfe"
         }
       ]
     },
@@ -112,39 +152,28 @@
       "id": "korie.stremio",
       "name": "Stremio",
       "type": "content",
-      "version": "1.0.1",
+      "version": "2.0.0",
       "author": "Korie",
-      "description": "Films, series, channels and live TV from Stremio add-ons. Add each add-on's address (its manifest.json) in the settings: films go under Films, series and channels under Series, TV under Live TV, and Search asks them too. Streams play when an add-on gives a web address for them; add-ons that only give torrents can't be played.",
+      "description": "Each person signs in with their own Stremio account. Their Stremio add-ons put films and series in their Films and Series, Search asks them, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
       "access": "sandbox",
       "permissions": [
         "internet"
       ],
       "hosts": [
+        "api.strem.io",
         "v3-cinemeta.strem.io"
-      ],
-      "hosts_from_settings": true,
-      "settings": [
-        {
-          "key": "addons",
-          "label": "Stremio add-ons",
-          "type": "list",
-          "help": "The address of each add-on's manifest.json (stremio:// addresses work too).",
-          "default": [
-            "https://v3-cinemeta.strem.io/manifest.json"
-          ]
-        }
       ],
       "path": "addons/korie.stremio",
       "files": [
         {
           "name": "addon.json",
-          "size": 860,
-          "sha256": "d7026dd854c5a2d9fdc15b8fe7dd0ffde96b91d75f36ee6a097213b626c49996"
+          "size": 914,
+          "sha256": "91708feeb0b242c0e0847da196deece89b64ced999d66a5829d4438597007a1c"
         },
         {
           "name": "main.lua",
-          "size": 11102,
-          "sha256": "313208c36e16c3edfc9a35e6d5f884b82f41e7496e49300e31f9142d0c7919b6"
+          "size": 20200,
+          "sha256": "fc65129c72291a946b7ae1d309122ce0495c8156d189d7ea3ccd8eb45212c91e"
         }
       ]
     }

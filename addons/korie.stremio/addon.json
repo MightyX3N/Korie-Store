@@ -2,27 +2,26 @@
 	"id": "korie.stremio",
 	"name": "Stremio",
 	"type": "content",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"author": "Korie",
-	"description": "Films, series, channels and live TV from Stremio add-ons. Add each add-on's address (its manifest.json) in the settings: films go under Films, series and channels under Series, TV under Live TV, and Search asks them too. Streams play when an add-on gives a web address for them; add-ons that only give torrents can't be played.",
+	"description": "Each person signs in with their own Stremio account. Their Stremio add-ons put films and series in their Films and Series, Search asks them, and what they watch in Korie shows up in Stremio's Continue Watching too, and the other way round. Streams play when an add-on gives a web address; add-ons that only give torrents can't be played.",
 	"main": "main.lua",
 	"access": "sandbox",
 	"permissions": [
 		"internet"
 	],
 	"hosts": [
+		"api.strem.io",
 		"v3-cinemeta.strem.io"
 	],
-	"hosts_from_settings": true,
-	"settings": [
-		{
-			"key": "addons",
-			"label": "Stremio add-ons",
-			"type": "list",
-			"help": "The address of each add-on's manifest.json (stremio:// addresses work too).",
-			"default": [
-				"https://v3-cinemeta.strem.io/manifest.json"
-			]
-		}
-	]
+	"hosts_from_account": true,
+	"accounts": {
+		"who": "person",
+		"label": "Stremio account",
+		"help": "Korie keeps only Stremio's sign-in key, never the password.",
+		"fields": [
+			{ "key": "email", "label": "E-mail", "type": "text" },
+			{ "key": "password", "label": "Password", "type": "password" }
+		]
+	}
 }

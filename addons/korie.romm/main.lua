@@ -1,5 +1,6 @@
--- RomM in Korie: games from a RomM server (https://github.com/rommapp/romm),
--- under Games. Playing opens RomM's own player (/rom/<id>/ejs) in a web view.
+-- RomM in Korie, version 2: games from a RomM server (https://github.com/rommapp/romm), under
+-- Games. Playing opens RomM's own player (/rom/<id>/ejs) in a web view. When the server can't be
+-- used, it says why: not reachable, the user name or password, or not a RomM server.
 
 local A = {}
 
@@ -7,19 +8,6 @@ local ROW = 24          -- games per row
 local PLATFORM_ROWS = 16
 
 local function trim(s) return (tostring(s or ""):gsub("^%s+", ""):gsub("%s+$", "")) end
-
-local B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-local function base64(s)
-  local out = {}
-  for i = 1, #s, 3 do
-    local a, b, c = s:byte(i, i + 2)
-    local n = (a << 16) | ((b or 0) << 8) | (c or 0)
-    out[#out + 1] = B64:sub((n >> 18) + 1, (n >> 18) + 1) .. B64:sub(((n >> 12) & 63) + 1, ((n >> 12) & 63) + 1)
-      .. (b and B64:sub(((n >> 6) & 63) + 1, ((n >> 6) & 63) + 1) or "=")
-      .. (c and B64:sub((n & 63) + 1, (n & 63) + 1) or "=")
-  end
-  return table.concat(out)
-end
 
 -- numbers come from JSON as floats: 11, not 11.0
 local function idstr(x)
@@ -44,7 +32,7 @@ local function headers(ctx)
   local h = { Accept = "application/json" }
   local st = (ctx and ctx.settings) or {}
   local user, pass = trim(st.username), tostring(st.password or "")
-  if user ~= "" then h.Authorization = "Basic " .. base64(user .. ":" .. pass) end
+  if user ~= "" then h.Authorization = "Basic " .. korie.base64(user .. ":" .. pass) end
   return h
 end
 
@@ -122,12 +110,23 @@ end
 function A.browse(ctx)
   local base = server(ctx)
   if not base then return { games = {}, home = {} } end
-  return { fetch = base .. "/api/platforms", as = "json", headers = headers(ctx), next = "browse_platforms",
-           state = { base = base, h = headers(ctx) } }
+  return { fetch = base .. "/api/platforms", as = "full", headers = headers(ctx), next = "browse_platforms",
+           state = { base = base, h = headers(ctx), user = trim(ctx.settings and ctx.settings.username) ~= "" } }
 end
 
-function A.browse_platforms(platforms, st)
+function A.browse_platforms(ans, st)
   local base = st.base
+  if not ans or ans.status == 0 then
+    return { error = "Can't reach the RomM server at " .. base .. ". Check the address in the settings, and that RomM is running." }
+  end
+  if ans.status == 401 or ans.status == 403 then
+    return { error = st.user and "RomM didn't accept the user name or password in the settings." or "RomM wants a user name and password: type them in the settings." }
+  end
+  if ans.status == 404 or type(ans.json) ~= "table" then
+    return { error = base .. " answered, but it isn't a RomM server (or it's a very old one)." }
+  end
+  if ans.status >= 400 then return { error = "RomM answered " .. tostring(ans.status) .. "." } end
+  local platforms = ans.json
   local plats = {}
   for _, p in ipairs(list_of(platforms)) do
     if type(p) == "table" and (tonumber(p.rom_count) or 1) > 0 then plats[#plats + 1] = p end
