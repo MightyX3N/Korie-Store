@@ -132,8 +132,13 @@ local CINEMETA = { base = "https://v3-cinemeta.strem.io", url = "https://v3-cine
 
 -- the add-ons added in Korie for everyone (no Stremio account needed); Cinemeta until the list is changed
 local function house_addons(ctx)
-  if type(ctx.house) == "table" and type(ctx.house.addons) == "table" then return ctx.house.addons end
-  return { CINEMETA }
+  local h = type(ctx.house) == "table" and ctx.house or {}
+  local list = type(h.addons) == "table" and h.addons or {}
+  if h.no_cinemeta then return list end
+  for _, a in ipairs(list) do if a.base == CINEMETA.base then return list end end
+  local out = { CINEMETA }
+  for _, a in ipairs(list) do out[#out + 1] = a end
+  return out
 end
 
 -- what a person uses: their own Stremio account's add-ons (if they signed in) and the house's
@@ -301,13 +306,15 @@ end
 -- what's kept for the house: its add-ons and their hosts (which Korie then lets the add-on fetch from)
 house_data = function(list)
   local hosts, seen = {}, {}
+  local cinemeta = false
+  for _, a in ipairs(list) do if a.base == CINEMETA.base then cinemeta = true end end
   for _, a in ipairs(list) do
     local h = host_of(a.base)
     if h and not seen[h] then seen[h] = true; hosts[#hosts + 1] = h:lower() end
   end
   if #list == 0 then list = { __array = true } end
   if #hosts == 0 then hosts = { __array = true } end
-  return { addons = list, hosts = hosts }
+  return { addons = list, hosts = hosts, no_cinemeta = not cinemeta }
 end
 
 local HELP = "The add-on's address (its manifest.json, or a stremio:// link), from the add-on's own page or stremio-addons.net."
