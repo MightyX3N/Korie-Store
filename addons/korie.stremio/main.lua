@@ -556,19 +556,38 @@ function A.play(it, ctx)
   return { fetch = jobs, next = "play_got", state = { kinds = kinds, live = d.type == "tv" } }
 end
 
+-- web pages and app stores, not video: "Watch on Netflix" and the like open another app in
+-- Stremio, which Korie can't do, so they're left out (they used to send the TV to the Play Store)
+local NOT_VIDEO = { "play.google.com", "apps.apple.com", "netflix.com", "disneyplus.com", "primevideo.com", "amazon.", "hbomax.com",
+  "max.com", "viaplay.", "skyshowtime.com", "tv2.dk", "dr.dk", "youtube.com", "youtu.be", "apple.com", "hulu.com", "paramountplus.com",
+  "peacocktv.com", "crunchyroll.com", "mubi.com", "imdb.com", "themoviedb.org", "justwatch.com" }
+
+local function playable(s)
+  if type(s) ~= "table" or type(s.url) ~= "string" or not s.url:match("^https?://") then return false end
+  if s.externalUrl or s.ytId or s.playerFrame then return false end
+  local host = (s.url:match("^https?://([^/:?#]+)") or ""):lower()
+  for _, h in ipairs(NOT_VIDEO) do
+    if host == h or host:sub(-(#h + 1)) == "." .. h or (h:sub(-1) == "." and host:find(h, 1, true)) then return false end
+  end
+  return true
+end
+
 function A.play_got(answers, st)
   local url, torrents_only, headers = nil, false, nil
+  local elsewhere = nil
   local subs = {}
   for i, a in ipairs(answers or {}) do
     if type(a) == "table" then
       if st.kinds[i] == "stream" then
         for _, s in ipairs(a.streams or {}) do
-          if not url and type(s.url) == "string" and s.url:match("^https?://") then
+          if not url and playable(s) then
             url = s.url
             local bh = s.behaviorHints and s.behaviorHints.proxyHeaders and s.behaviorHints.proxyHeaders.request
             if type(bh) == "table" then headers = bh end
           elseif s.infoHash then
             torrents_only = true
+          elseif type(s) == "table" and (s.externalUrl or s.ytId or s.url) and not elsewhere then
+            elsewhere = s.name or s.title or (tostring(s.externalUrl or s.url or ""):match("^https?://([^/]+)")) or "another app"
           end
         end
       else
@@ -580,6 +599,7 @@ function A.play_got(answers, st)
   end
   if not url then
     if torrents_only then return { error = "your Stremio add-ons only offer torrents for this, which Korie can't play" } end
+    if elsewhere then return { error = "it's only offered in another app (" .. tostring(elsewhere):gsub("%s+", " ") .. "), which Korie can't play" } end
     return { error = "no stream for this right now" }
   end
   return { url = url, subtitles = subs, live = st.live, headers = headers }
