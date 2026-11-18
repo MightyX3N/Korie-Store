@@ -104,6 +104,11 @@ local function map(i)
   elseif t == "episode" then
     v.id, v.kind, v.runtime = tostring(i.id), "episode", minutes(i)
     v.series = i.showId and tostring(i.showId) or nil
+    -- DR names episodes "Matador: Genboen": the series' name, then the episode's
+    local show, rest = tostring(v.title):match("^(.-):%s+(.+)$")
+    v.series_title = i.showTitle or show
+    if show and (not i.showTitle or i.showTitle == show) then v.title = rest end
+    v.season, v.episode = int(i.seasonNumber), int(i.episodeNumber)
     v.subtitle = (i.showTitle and i.showTitle ~= "" and i.showTitle .. " · " or "") .. v.runtime .. " min"
   else
     return nil
