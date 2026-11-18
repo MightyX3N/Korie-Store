@@ -218,7 +218,8 @@ function A.browse_got(ans, st)
       out.home[#out.home + 1] = r
     end
   end
-  -- every DRTV category (Dokumentar, Nyheder, Ramasjang ...) under Series
+  -- every DRTV category (Dokumentar, Nyheder, Ramasjang ...) under Series and under Films: Korie
+  -- shows only a category's series under Series and only its films under Films
   if st.cats then
     local cats = find_list(front, "Kategorier")
     local items = {}
@@ -229,7 +230,8 @@ function A.browse_got(ans, st)
     for _, extra in ipairs({ { "/ramasjang", "Ramasjang" }, { "/minisjang", "Minisjang" }, { "/ultra", "Ultra" }, { "/gensyn", "Gensyn" } }) do
       items[#items + 1] = { id = "page:" .. extra[1], kind = "page", title = extra[2], data = { path = extra[1] } }
     end
-    table.insert(out.series, 1, { id = "categories", title = "Kategorier", items = items })
+    if st.series then table.insert(out.series, 1, { id = "categories", title = "Kategorier", items = items }) end
+    if st.films then table.insert(out.films, 1, { id = "categories", title = "Kategorier", items = items }) end
   end
   return out
 end
