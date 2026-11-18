@@ -378,7 +378,16 @@ function A.login(fields, ctx)
 end
 
 function A.login_page(ans, st)
-  if not ans or ans.status ~= 200 then return { error = "DR's login page didn't open (" .. tostring(ans and ans.status) .. ")" } end
+  -- DR still knew this server from a sign-in before: it sends the code back straight away
+  if ans and ans.url and ans.url:sub(1, #CALLBACK) == CALLBACK then
+    if ans.url:match("[?&]code=") then return A.login_code(ans, st) end
+    local why = ans.url:match("[?&]error_description=([^&#]+)") or ans.url:match("[?&]error=([^&#]+)")
+    if why then why = (why:gsub("%+", " "):gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)) end
+    return { error = "DR said no: " .. (why or "no reason given") }
+  end
+  if not ans or ans.status ~= 200 then
+    return { error = "DR's login page didn't open (" .. tostring(ans and ans.status) .. (ans and ans.url and ans.url ~= "" and (", it went to " .. ans.url:match("^https?://[^/?#]+[^?#]*")) or "") .. ")" }
+  end
   -- the transaction is the last part of the login page's path (Kodi's add-on reads it the same way)
   local path = ans.url:match("^https?://[^/]+([^?#]*)") or ""
   st.trans = path:match("([^/]+)/*$")
