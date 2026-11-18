@@ -247,13 +247,17 @@ end
 local anon = { account = nil, profile = nil, til = 0 }
 
 local function token_list(ans)
-  -- DR answers with a list of { type = "UserAccount" | "UserProfile", value, expirationDate }
+  -- DR answers with a list of tokens: the account's first, then the profile's. Anonymous ones are
+  -- { type, value, expirationDate }; after a login they're { Type, Token, Expires } (as Kodi's
+  -- DR add-on reads them), so both are read, and by position when there's no type.
   local out = {}
-  for _, t in ipairs(type(ans) == "table" and ans or {}) do
+  for i, t in ipairs(type(ans) == "table" and ans or {}) do
     if type(t) == "table" then
-      local v = t.value or t.Token
-      if t.type == "UserAccount" then out.account, out.account_til = v, iso_time(t.expirationDate or t.Expires) end
-      if t.type == "UserProfile" then out.profile, out.profile_til = v, iso_time(t.expirationDate or t.Expires) end
+      local v = t.value or t.Token or t.token
+      local kind = tostring(t.type or t.Type or ""):lower()
+      local til = iso_time(t.expirationDate or t.Expires or t.expires)
+      if kind:find("profile") or (kind == "" and i == 2) then out.profile, out.profile_til = v, til
+      elseif kind:find("account") or (kind == "" and i == 1) then out.account, out.account_til = v, til end
     end
   end
   return out

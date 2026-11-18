@@ -6,7 +6,7 @@
       "id": "korie.drtv",
       "name": "DRTV",
       "type": "content",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "author": "Korie",
       "description": "DR's streaming service in Korie: DRTV's films under Films, its series and categories (Dokumentar, Nyheder, Krimi, Ramasjang ...) under Series, DR1, DR2, DR Ramasjang and TVA under Live TV, and DRTV in Search. Works without a login; with the house's DR login each person uses one of its DR profiles, with their own Continue watching and My list. DR only streams to Denmark.",
       "access": "sandbox",
@@ -61,12 +61,12 @@
         {
           "name": "addon.json",
           "size": 1571,
-          "sha256": "15052086acb5fd0717daff9aa22274140e3de34174fd00df0b90d7c81dd5940d"
+          "sha256": "62d3457c05a97742ed9e1462759a96678d7b0f97848b3813aaea3af5adaf7a7d"
         },
         {
           "name": "main.lua",
-          "size": 29187,
-          "sha256": "0d8eed60ff70e20b3ab8fc1301086a8d7c1c34bbb6d710f3bc36e349bd78455f"
+          "size": 29489,
+          "sha256": "758b92a60260f014df22f1139f44718e0c285d548ddafebe15c9d332af8f212f"
         }
       ]
     },
