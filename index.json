@@ -100,6 +100,66 @@
       ]
     },
     {
+      "id": "korie.radio",
+      "name": "Radio",
+      "type": "content",
+      "version": "1.0.0",
+      "author": "Korie",
+      "description": "Internet radio from Radio Browser's open directory of stations: the most liked stations of your country under Live TV, and every station in Search.",
+      "access": "sandbox",
+      "permissions": [
+        "internet"
+      ],
+      "hosts": [
+        "all.api.radio-browser.info",
+        "*.api.radio-browser.info"
+      ],
+      "settings": [
+        {
+          "key": "countries",
+          "label": "Countries",
+          "type": "list",
+          "help": "Two-letter country codes, like DK, SE or GB. Their most liked stations show under Live TV.",
+          "default": [
+            "DK"
+          ]
+        },
+        {
+          "key": "count",
+          "label": "Stations per country",
+          "type": "choice",
+          "options": [
+            [
+              "25",
+              "25"
+            ],
+            [
+              "50",
+              "50"
+            ],
+            [
+              "100",
+              "100"
+            ]
+          ],
+          "default": "50"
+        }
+      ],
+      "path": "addons/korie.radio",
+      "files": [
+        {
+          "name": "addon.json",
+          "size": 776,
+          "sha256": "1374b17f966f2076c3d38df596df8521250f47563e97f2fbaba45ccfdcc2d1bf"
+        },
+        {
+          "name": "main.lua",
+          "size": 4986,
+          "sha256": "7f3241ef1b461e05bc468ce9215d06c2072737f8fc13ca00076f942f143566ec"
+        }
+      ]
+    },
+    {
       "id": "korie.romm",
       "name": "RomM",
       "type": "content",

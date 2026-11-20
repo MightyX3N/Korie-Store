@@ -10,6 +10,7 @@ and in Search.
 | DRTV | DR's films, series, categories and live channels (DR1, DR2, Ramasjang, TVA). DR only streams to Denmark. |
 | Free Films | Silent classics in the public domain and the Blender Foundation's open movies, from the Internet Archive. |
 | Stremio | Films, series and TV from Stremio add-ons you add by their manifest address. Signing in with a Stremio account per person is coming. |
+| Radio | Internet radio from Radio Browser's open directory: the most liked stations of the countries you pick under Live TV, and every station in Search. |
 | RomM | Your games from a RomM server. Jellyfin's apps can't open games, so they only show in Korie's own pages. |
 
 ## Writing an add-on
