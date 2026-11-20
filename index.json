@@ -103,9 +103,9 @@
       "id": "korie.radio",
       "name": "Radio",
       "type": "content",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Korie",
-      "description": "Internet radio from Radio Browser's open directory of stations: the most liked stations of your country under Live TV, and every station in Search.",
+      "description": "Internet radio from Radio Browser's open directory of stations: the most liked stations of your country under Live, and every station in Search.",
       "access": "sandbox",
       "permissions": [
         "internet"
@@ -119,7 +119,7 @@
           "key": "countries",
           "label": "Countries",
           "type": "list",
-          "help": "Two-letter country codes, like DK, SE or GB. Their most liked stations show under Live TV.",
+          "help": "Two-letter country codes, like DK, SE or GB. Their most liked stations show under Live.",
           "default": [
             "DK"
           ]
@@ -149,13 +149,13 @@
       "files": [
         {
           "name": "addon.json",
-          "size": 776,
-          "sha256": "1374b17f966f2076c3d38df596df8521250f47563e97f2fbaba45ccfdcc2d1bf"
+          "size": 770,
+          "sha256": "0bb46d9ab114b80245f233c9fd94f2e920ef43f904ee2cf4eac06aeabb6523b1"
         },
         {
           "name": "main.lua",
-          "size": 5000,
-          "sha256": "9aba4ff856a7b0b684266cb5912cc2abbb50300c4e9274765eb259f2c7ab927f"
+          "size": 4997,
+          "sha256": "666ceebfa914287ce9764d56c88ec7939d63ee63d84abb574abca26b248ce96c"
         }
       ]
     },

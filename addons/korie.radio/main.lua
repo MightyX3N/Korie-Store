@@ -85,7 +85,7 @@ function A.answered(res, state)
 	return A[state.after](res.json, state)
 end
 
--- Live TV: the most liked stations of each country, one country after another
+-- Live: the most liked stations of each country, one country after another
 function A.browse(ctx)
 	local cs = countries(ctx)
 	return ask("/json/stations/bycountrycodeexact/" .. cs[1] .. "?order=votes&reverse=true&hidebroken=true&limit=" .. (count(ctx) * 2), "got_country", { countries = cs, i = 1, n = count(ctx), live = {} })
